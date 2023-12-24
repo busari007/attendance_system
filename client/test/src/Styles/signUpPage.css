@@ -1,0 +1,97 @@
+  
+  .container{
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 7.5rem 18rem;
+    display: flex;
+    width: 65%;
+    border-radius:20px;
+    box-shadow: 10px 4px 18px rgba(16, 13, 13, 0.1);
+  }
+  
+  #background_logo{
+    border: 2px solid rgb(53, 29, 147);
+    width: 45%;
+    max-height: 80%;
+    object-fit: cover;
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+  }
+  
+  #background_logo img{
+    height: auto;
+  }
+  
+  .header{
+    font-size:50px;
+    margin: 5%;
+    margin-top: -10%;
+    margin-bottom: 8%;
+    margin-left: 20%;
+    font-family:Arial, Helvetica, sans-serif;
+  }
+  
+  .form{
+    float:inline-end;
+    width: 41%;
+    float: right;
+   text-align: left;
+    padding: 3%;
+    margin: 2%;
+    margin-left: 6%;
+  }
+  
+  .form label{
+    display:block;
+     margin-bottom: 8px;
+     font-weight:350;
+  }
+  
+  .form input{
+    width: 100%;
+    padding: 1.5%;
+    border-radius: 11px;
+    box-shadow: 10px 4px 18px rgba(10, 10, 10, 0.1);
+  }
+  .form input,label{
+    margin: 2.5%;
+  }
+  
+  .submit{
+    width: 39%;
+    padding: 3.4%;
+    background-color: rgb(19, 58, 232);
+    border-radius: 16px;
+    color: aliceblue;
+    font-weight: 550;
+    margin: 4.5%;
+    margin-bottom: -20%;
+    margin-left: 30%;
+  }
+  
+  .submit:hover{
+    background-color: rgb(56, 84, 188);
+    cursor: pointer;
+  }
+
+  .errors{
+    color: rgb(186, 38, 38);
+    font-weight: bolder;
+  }
+
+  #signIn_link{
+    margin: 5%;
+    text-align: center;
+  }
+
+  .submitting_confirmation{
+    color: rgb(186, 38, 38);
+    text-align: center;
+    font-weight: 600;
+  }
+  .submitting_confirmed{
+      color: rgb(45, 209, 8);
+      font-weight: 600;
+      text-align: center;
+  }
