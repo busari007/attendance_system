@@ -78,15 +78,6 @@ handleSubmit=(e)=>{
     })
  }
  
- componentDidUpdate(prevProps, prevState) {
-    // Check if the username state has changed
-    console.log(prevState);
-    if (this.state.username !== prevState.username) {
-      // Navigate to Home component when username is available
-      this.setState({ homesRender: true });
-    }
-  }
-
     render(){
         return(
             <div> 
