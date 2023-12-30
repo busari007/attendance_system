@@ -3,16 +3,16 @@
     position: absolute;
     top: 0;
     left: 0;
-    margin: 7.5rem 18rem;
+    margin: 3.6rem 15.7rem;
     display: flex;
-    width: 65%;
+    width: 70%;
     border-radius:20px;
     box-shadow: 10px 4px 18px rgba(16, 13, 13, 0.1);
   }
   
   #background_logo{
     border: 2px solid rgb(53, 29, 147);
-    width: 45%;
+    width: 50%;
     max-height: 80%;
     object-fit: cover;
     border-top-left-radius: 20px;
@@ -24,7 +24,7 @@
   }
   
   .header{
-    font-size:50px;
+    font-size:45px;
     margin: 5%;
     margin-top: -10%;
     margin-bottom: 8%;
@@ -94,4 +94,8 @@
       color: rgb(45, 209, 8);
       font-weight: 600;
       text-align: center;
+  }
+
+  .links:hover{
+     color: red;
   }

@@ -1,34 +1,57 @@
+import "../Styles/Home.css";
+import { FaArrowLeft, FaBars, FaBell, FaCopyright } from 'react-icons/fa';
+import { useState, useEffect, useRef } from "react";
+import logo from '../Pictures/logo.jpg';
+
 
 import React from "react";
 
-class Home extends React.Component {
-  constructor(props){
-    super(props);
-    this.state= {
-      username:this.props.username,
-    };
-  }
+const Home = (props) =>{
+ 
+ const [isOpen, setOpen] = useState(false);
+ const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
 
-  render() {
+ function handleToggle(){
+     setOpen(!isOpen);
+ }
+
+ const handleOutsideClick = (event) => {
+  if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+    setOpen(false);
+  }
+};
+
+useEffect(() => {
+  document.addEventListener('mousedown', handleOutsideClick);
+
+  return () => {
+    document.removeEventListener('mousedown', handleOutsideClick);
+  };
+}, []);
 
     return (
       <div>
-        <h2>User Data in Home Component</h2>
-        {/* <nav className="nav">
-      <div className="navbarContainer">
-        <h3 className="logo">Your Logo</h3>
-        <ul className="navLinks">
-          <li><h4 className="navLink">Home</h4></li>
-          <li><h4 className="navLink">About</h4></li>
-          <li><h4 className="navLink">Services</h4></li>
-          <li><h4 className="navLink">Contact</h4></li>
-        </ul>
-      </div>
-    </nav> */}
-        <button onClick={() => console.log(this.props.username)}>Click</button>
-      </div>
+        <nav className="Header">
+      <FaBars className="icons" onClick={handleToggle} />
+      <img className="as_logo" src={logo} alt="logo"/>
+    <p className="welcome_text">Welcome, {"busari.007"}{props.username}</p>
+    <FaBell className="icons"/>
+    </nav> 
+    <div className={`sidebar ${isOpen ? 'open' : 'close'}`} ref={sidebarRef}>
+      <div id="sidebarHeader">
+      <FaArrowLeft style={{color:'rgb(65,65,65)'}} onClick={handleToggle} className="icons"/>
+      <h2>UAS</h2>
+     </div>
+      <ul>
+        <li><a className="sidebar_content" href="/courses">Course List</a></li>
+        <li><a className="sidebar_content" href="/addCourses">Add Course</a></li>
+        <li><a style={{marginLeft:'31.5%'}} className="sidebar_content" href="/">Log Out</a></li>    
+      </ul>
+      <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
+    </div>
+        {/*<button onClick={() => console.log(props.username)}>Click</button>*/}
+    </div>
     );
   }
-}
 
 export default Home;

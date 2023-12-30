@@ -1,41 +1,122 @@
+.Header {
+  color: #2a2aaf;
+  border: 1px solid #02022f24;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom-left-radius: 9px;
+  border-bottom-right-radius: 9px;
+}
 
-.nav {
-    background-color: #f8f9fa;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 1rem;
-  }
+.Header ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  padding: 1.5%;
+}
+
+.icons {
+  padding: 1%;
+  width: fit-content;
+  height: fit-content;
+  margin: 1%;
+  font-size: 25px;
+  transition: background-color 0.1s ease-in-out;
+  border-radius: 50%;
+  overflow: visible;
+}
+
+.icons:hover {
+  background-color: rgba(232, 228, 223, 0.4);
+  cursor: pointer;
+}
+
+.welcome_text {
+  margin-right: -76%;
+  font-weight: 500;
+}
+
+
+#sidebar_container{
+  border: 1px solid black;
+}
+
+.sidebar {
+  height: 100vh;
+  width: 15%;
+  border: 1px solid #0000008a;
+  background-color: rgb(214, 214, 218);
+  position: absolute;
+  top: 0;
+  left: -300px;
+  transition: left 0.4s ease-in;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+#sidebarHeader{
+  color: #0000EE;
+  align-items: center;
+  display: flex;
+  margin: 9%;
+}
+
+.sidebar.open{
+  left: 0;
+}
+
+.sidebar .icons {
+  margin: 1%;
+  position: relative;
+  left: -10%;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 1%;
+}
+
+.sidebar li{
+  margin-top: 30%;
+}
+
+.sidebar a{
+  text-decoration: none;
+  font-size: large;
+}
+
+.sidebar a:hover{
+  color: rgb(92, 113, 192);
+  cursor: pointer;
+}
+
+.sidebar_content{
+   margin-left: 27%;
+   color: #0000EE;
+}
+
+.page_content{
+  margin: 5%;
+  margin-left: 10%;
   
-  .navbar-container {
-    display: flexbox;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-  
-  .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
-    text-decoration: none;
-  }
-  
-  .nav-links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 20px;
-  }
-  
-  .nav-link {
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    transition: color 0.3s ease;
-  }
-  
-  .nav-link:hover {
-    color: #007bff;
-  }
-  
+  visibility: hidden;
+  transition: margin-left 0.4s ease-in-out;
+}
+
+.page_content.shift{
+  margin-left: 15%;
+  visibility: visible;
+  transition: visibility 0.1 ease-in-out;
+}
+
+.as_logo{
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin: 1.5%;
+  margin-left: 5%;
+}

@@ -81,6 +81,21 @@ app.post('/logIn',(req,res)=>{
     });
 });
 
+//query for creating courses
+app.post('/courses',(req,res)=>{
+  const newCourse = req.body;
+  db.query('INSERT INTO courses SET ?',newCourse,(err,result)=>{
+      if(err){
+          console.error('Error inserting data:',err)
+          res.status(500).send('Error inserting data into database');
+      }else{
+          console.log("Course created:",result);
+          res.send("Course created successfully");
+      }
+  });
+
+});
+
 app.listen(5000,()=>{
     console.log("Server started on port 5000");
 })

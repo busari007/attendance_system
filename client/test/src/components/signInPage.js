@@ -74,7 +74,10 @@ handleSubmit=(e)=>{
             console.log(response.status);
         }
     }).catch((err)=>{
-        console.error(err);
+        console.error(err.message);
+        if(err.message === "Request failed with status code 401"){
+            window.alert("Invalid Details");
+        }
     })
  }
  
@@ -93,10 +96,10 @@ handleSubmit=(e)=>{
                    <input type="password" id="password" onChange={(e)=>this.handleChange(e)}/>
                    {this.state.formValid? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
                    <button className="submit" disabled={!this.state.formValid}>{"Log In"}{(this.state.result===true?true:false) && (this.state.username===""?false:true) && <Navigate to="/home"/>}</button>
-                   <p id="signIn_link">Don't have an account? Sign up <a href="/signUp">here</a></p>
+                   <p id="signIn_link">Don't have an account? Sign up <a className="links" href="/signUp">here</a></p>
                 </form>
                 </div>
-                {this.state.homesRender? <Home username={this.state.username}/> : ""}
+                <span style={{visibility:'hidden'}}><Home username={this.state.username}/></span>
             </div>
         );
     }

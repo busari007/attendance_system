@@ -111,7 +111,7 @@ class SignUp extends React.Component{
         <input type="text" id="matric_num" onChange={(e)=>this.handleChange(e)}/>
        {this.state.formValid? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
         <button className="submit" disabled={!this.state.formValid}>Register</button>
-        <p id="signIn_link">Already have an account? Sign in <a href="/">here</a></p>
+        <p id="signIn_link">Already have an account? Sign in <a className="links" href="/">here</a></p>
       </form>
       </div>
     </div>
