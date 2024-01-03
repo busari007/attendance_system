@@ -2,12 +2,12 @@ import "../Styles/Home.css";
 import { FaArrowLeft, FaBars, FaBell, FaCopyright } from 'react-icons/fa';
 import { useState, useEffect, useRef } from "react";
 import logo from '../Pictures/logo.jpg';
-
-
 import React from "react";
+import { useLocation } from "react-router-dom";
 
-const Home = (props) =>{
- 
+function Home (){
+  const location = useLocation();
+  const username = location.state && location.state.username;
  const [isOpen, setOpen] = useState(false);
  const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
 
@@ -22,6 +22,8 @@ const Home = (props) =>{
 };
 
 useEffect(() => {
+  console.log(username);
+
   document.addEventListener('mousedown', handleOutsideClick);
 
   return () => {
@@ -34,7 +36,8 @@ useEffect(() => {
         <nav className="Header">
       <FaBars className="icons" onClick={handleToggle} />
       <img className="as_logo" src={logo} alt="logo"/>
-    <p className="welcome_text">Welcome, {"busari.007"}{props.username}</p>
+      <h2 className="page_name">Home</h2>
+    <p className="welcome_text">Welcome, {username}</p>
     <FaBell className="icons"/>
     </nav> 
     <div className={`sidebar ${isOpen ? 'open' : 'close'}`} ref={sidebarRef}>

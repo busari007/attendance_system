@@ -9,6 +9,7 @@ const AddCourses = (props)=> {
     const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
     const [state,setState] = useState({
       session:"",
+      department:"",
       course_name:"",
       course_code:""
     });
@@ -18,11 +19,19 @@ const AddCourses = (props)=> {
     Axios.post("http://localhost:5000/courses",{
       session:state.session,
       course_name:state.course_name,
-      course_code:state.course_code
+      course_code:state.course_code,
+      department:state.department
     }).then((result)=>{
       console.log(result);
+      if(result.status === 200){
+        window.alert("Successfully registered courses");
+        window.location.reload();  //reloads page after courses have been sent
+      }
     }).catch((err)=>{
       console.log(err);
+      if(err){
+        window.alert("Error please try again");
+      }
     });
   }
 
@@ -60,6 +69,7 @@ const AddCourses = (props)=> {
          <nav className="Header">
       <FaBars className="icons" onClick={handleToggle} />
       <img className="as_logo" src={logo} alt="logo"/>
+      <h2 className="page_name">Add Courses</h2>
     <p className="welcome_text">Welcome, {"busari.007"}{props.username}</p>
     <FaBell className="icons"/>
     </nav> 
@@ -76,20 +86,28 @@ const AddCourses = (props)=> {
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
      
-    <h1 id="text" className={`page_content ${isOpen? 'shift':''}`}>Here</h1>
-    <div className="course_container">
-      <label className="courseContainerHeader">What session are you in?</label>
-      <input type="text" id="session" onChange={(e)=>handleChange(e)}/>
+    {/* To test sliding into visibility transition <h1 id="text" className={`page_content ${isOpen? 'shift':''}`}>Here</h1> */}
+    <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
+      <label className="course_container_header">Enter your Session</label>
+      <div className="course_container_content">
+      <input style={{marginBottom:"5%", marginTop:'-1%'}} type="text" id="session" placeholder="e.g. 2024/2025" onChange={(e)=>handleChange(e)}/>
+      </div>
+    </div>
+    <div style={{marginBottom:'2%'}} className="course_container">
+    <label className="course_container_header">Enter your Department</label>
+      <div className="course_container_content">
+      <input style={{marginBottom:"5%", marginTop:'-1%'}} type="text" id="department" placeholder="Department" onChange={(e)=>handleChange(e)}/>
+     </div>
     </div>
     <div className="course_container">
-      <label className="courseContainerHeader">Enter your course names and codes</label>
-      <div id="course_container_content">
+      <label className="course_container_header">Enter your course names and codes</label>
+      <div className="course_container_content">
       <input type="text" id="course_name" placeholder="Course Name" onChange={(e)=>handleChange(e)}/>
       <input type="text" id="course_code" placeholder="Course Code" onChange={(e)=>handleChange(e)}/>
       </div>
-      <button className="submit" onClick={(e)=>handleSubmit(e)}>Submit</button>
       <h1 style={{color:'#0000EE', visibility:"hidden"}}>Go to Course List to check list of courses</h1>
     </div>
+    <button id="course_submit" className="submit" onClick={(e)=>handleSubmit(e)}>Submit</button>
     </div>
    );
 }

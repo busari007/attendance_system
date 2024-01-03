@@ -1,3 +1,7 @@
+ul{
+  list-style: none;
+}
+
 .Header {
   color: #2a2aaf;
   border: 1px solid #02022f24;
@@ -33,7 +37,10 @@
 }
 
 .welcome_text {
-  margin-right: -76%;
+  position: absolute;
+  top: 5;
+  right: 0;
+  margin-right: 5.5%;
   font-weight: 500;
 }
 
@@ -119,4 +126,44 @@
   left: 0;
   margin: 1.5%;
   margin-left: 5%;
+}
+
+.course_container {
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: block;
+  border-radius: 5px;
+  border: 0.55px solid rgb(0, 0, 0, 0.45);
+  width: 45%;
+  margin-left: 27%;
+}
+  
+
+.course_container_header{
+  margin:2%;
+  font-size: large;
+  font-weight: 600;
+}
+
+.course_container_content {
+  display: flex;
+  flex: 1;
+  margin-left: 5%;
+  margin-top: 5%;
+}
+
+.course_container_content input {
+  margin-right: 4.5%;
+  padding: 1.2%;
+  border-radius: 5px;
+  border-width: 0;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  width: 55%;
+}
+
+#course_submit{
+  padding: 1%;
+  width: 100px;
+  margin-top: 2.5%;
+  margin-left: 62.5%;
 }

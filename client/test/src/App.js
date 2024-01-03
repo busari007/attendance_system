@@ -3,6 +3,7 @@ import SignUp from "./components/signUpPage";
 import SignIn from "./components/signInPage";
 import Home from "./components/Home";
 import AddCourses from "./components/addCourses";
+import Courses from "./components/Courses";
 import { BrowserRouter,Routes, Route} from "react-router-dom";
 import React from "react";
 
@@ -36,10 +37,11 @@ class App extends React.Component{
     <div>
        <BrowserRouter>
         <Routes>
-            <Route path="/signUp" element={<SignUp state={this.state}/>}/>  
-            <Route path="/home" element={<Home/>}/>
             <Route path="/" element={<SignIn state={this.state}/>}/>
+            <Route path="/signUp" element={<SignUp state={this.state}/>}/>  
+            <Route path="/home" element={<Home username="bubu"/>}/>
             <Route path="/addCourses" element={<AddCourses/>}/>
+            <Route path="/courses" element={<Courses />}/>
        </Routes>    
        </BrowserRouter>
     </div>

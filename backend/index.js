@@ -82,20 +82,31 @@ app.post('/logIn',(req,res)=>{
 });
 
 //query for creating courses
-app.post('/courses',(req,res)=>{
+app.post('/courses', (req, res) => {
   const newCourse = req.body;
-  db.query('INSERT INTO courses SET ?',newCourse,(err,result)=>{
-      if(err){
-          console.error('Error inserting data:',err)
-          res.status(500).send('Error inserting data into database');
-      }else{
-          console.log("Course created:",result);
-          res.send("Course created successfully");
-      }
+  db.query('INSERT INTO courses SET ?', newCourse, (err, result) => {
+    if (err) {
+      console.error('Error inserting data:', err)
+      res.status(500).send('Error inserting data into the database');
+    } else {
+      console.log('Course created:', result);
+      res.send('Course created successfully');
+    }
   });
-
 });
 
-app.listen(5000,()=>{
-    console.log("Server started on port 5000");
-})
+// Query for fetching all courses
+app.get('/courses', (req, res) => {
+  db.query('SELECT * FROM courses', (err, result) => {
+    if (err) {
+      console.error('Error executing the SELECT query:', err);
+      res.status(500).send('Error retrieving data from the database');
+    } else {
+      res.json(result);
+    }
+  });
+});
+
+app.listen(5000, () => {
+  console.log('Server started on port 5000');
+});

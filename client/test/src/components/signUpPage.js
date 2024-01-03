@@ -2,6 +2,7 @@ import "../Styles/signUpPage.css";
 import logo from "../Pictures/babcock-logo.gif";
 import React from "react";
 import Axios from 'axios';
+import { Navigate } from "react-router-dom";
 
 class SignUp extends React.Component{
   constructor(props){
@@ -86,6 +87,9 @@ class SignUp extends React.Component{
    }).then((res)=>{
     const response = res.status;
     console.log("Successfully submitted",response);
+    if(response === 200){
+      this.setState({result:true});
+    }
    }).catch((err)=>{
     console.log(err);
    });
@@ -110,7 +114,7 @@ class SignUp extends React.Component{
         <label className="errors">{this.state.Errors.C_matricNum}</label>
         <input type="text" id="matric_num" onChange={(e)=>this.handleChange(e)}/>
        {this.state.formValid? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
-        <button className="submit" disabled={!this.state.formValid}>Register</button>
+        <button className="submit" disabled={!this.state.formValid}>Register {(this.state.result? true: false) && <Navigate to="/home"/>}</button>
         <p id="signIn_link">Already have an account? Sign in <a className="links" href="/">here</a></p>
       </form>
       </div>
