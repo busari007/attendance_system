@@ -107,6 +107,24 @@ app.get('/courses', (req, res) => {
   });
 });
 
+//query for displaying the courses
+app.post('/getCourses', (req, res) => {
+  const { matric_num } = req.body;
+  db.query('SELECT courses.course_name, course_code FROM courses JOIN users ON courses.matric_num = users.matric_num WHERE users.matric_num = ?', [matric_num], (err, result) => {
+    if (err) {
+      console.error("Query Error", err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    } else {
+      if (result.length > 0) {
+        const courses = result.map(row => ({ course_name: row.course_name, course_code: row.course_code }));
+        res.json({ courses, success: true });
+      } else {
+        res.status(401).json({ success: false, message: 'Matric Number not found' });
+      }
+    }
+  });
+});
+
 app.listen(5000, () => {
   console.log('Server started on port 5000');
 });

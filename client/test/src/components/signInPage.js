@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 function SignIn(props) {
     const navigate = useNavigate();
   const [state, setState] = useState(props.state);
-  const { username } = props.state;
   const [matricNumError, setMatricNumError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [formValid, setFormValid] = useState(false);
@@ -45,12 +44,12 @@ function SignIn(props) {
     }).then((response) => {
       console.log("Server response: ", response);
       if (response.status === 200) {
-        const { username, success } = response.data;
+        const { username, matric_num ,success } = response.data;
         console.log("Successfully Validated");
         console.log(username);
-        setState((prevState) => ({ ...prevState, username: username, result: success, homesRender: true }));
+        setState((prevState) => ({ ...prevState, username: username, matric_num: matric_num ,result: success, homesRender: true }));
         console.log("username in sign in: ", state.username);
-        navigate('/home', {state:{ username }} );
+        navigate('/home', {state:{ username, matric_num }} );
       } else {
         console.log(response.status);
       }

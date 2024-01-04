@@ -89,6 +89,7 @@ ul{
 }
 
 .sidebar a{
+  color: #0000EE;
   text-decoration: none;
   font-size: large;
 }
@@ -96,11 +97,6 @@ ul{
 .sidebar a:hover{
   color: rgb(92, 113, 192);
   cursor: pointer;
-}
-
-.sidebar_content{
-   margin-left: 27%;
-   color: #0000EE;
 }
 
 .page_content{
@@ -166,4 +162,21 @@ ul{
   width: 100px;
   margin-top: 2.5%;
   margin-left: 62.5%;
+}
+
+.sidebar-links{
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: pointer;
+  margin-left: 27%;
+  color: #0000EE;
+  font-size: large;
+}
+
+.sidebar-links:hover{
+  color: rgb(92, 113, 192);
+  cursor: pointer;
 }

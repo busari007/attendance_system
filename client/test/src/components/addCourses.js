@@ -2,25 +2,29 @@ import React,{ useState,useEffect,useRef } from "react";
 import { FaArrowLeft, FaBars, FaBell, FaCopyright } from 'react-icons/fa';
 import logo from "../Pictures/logo.jpg";
 import  Axios from "axios";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AddCourses = (props)=> {
-
-    const [isOpen, setOpen] = useState(false);
-    const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
-    const [state,setState] = useState({
+   const location = useLocation();
+   const { username, matric_num } = location.state;
+   const navigate = useNavigate();
+   const [isOpen, setOpen] = useState(false);
+   const sidebarRef = useRef(null); 
+   const [state,setState] = useState({
       session:"",
       department:"",
       course_name:"",
       course_code:""
     });
 
-  function handleSubmit(e){
+ function handleSubmit(e){
     e.preventDefault();
     Axios.post("http://localhost:5000/courses",{
       session:state.session,
       course_name:state.course_name,
       course_code:state.course_code,
-      department:state.department
+      department:state.department,
+      matric_num: matric_num  //gotten from ./home
     }).then((result)=>{
       console.log(result);
       if(result.status === 200){
@@ -39,7 +43,7 @@ const AddCourses = (props)=> {
      let name = e.target.id;
      let value = e.target.value;
      setState((prevState) => ({
-      ...prevState,              //spreads the existing state and update only the property corresponding to the changed input field.
+      ...prevState,              
       [name]: value
     }));
     }
@@ -70,7 +74,7 @@ const AddCourses = (props)=> {
       <FaBars className="icons" onClick={handleToggle} />
       <img className="as_logo" src={logo} alt="logo"/>
       <h2 className="page_name">Add Courses</h2>
-    <p className="welcome_text">Welcome, {"busari.007"}{props.username}</p>
+    <p className="welcome_text">Welcome, {username}</p>
     <FaBell className="icons"/>
     </nav> 
     <div className={`sidebar ${isOpen ? 'open' : 'close'}`} ref={sidebarRef}>
@@ -79,8 +83,8 @@ const AddCourses = (props)=> {
        <h2>UAS</h2>
       </div>
       <ul>
-        <li><a style={{marginLeft:'35.5%'}} className="sidebar_content" href="/home">Home</a></li>
-        <li><a className="sidebar_content" href="/courses">Course List</a></li>
+        <li><button style={{marginLeft:'35.5%'}} className="sidebar-links" onClick={()=>{navigate('/home', {state:{ username, matric_num }})}}>Home</button></li>
+        <li><button className="sidebar-links" onClick={()=>{navigate('/courses', {state:{ username, matric_num }})}}>Course List</button></li>  {/*Passes the username and matric_num into ./courses as state in the navigate function */}
         <li><a style={{marginLeft:'32.5%'}} className="sidebar_content" href="/">Log Out</a></li>      
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
