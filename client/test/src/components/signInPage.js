@@ -21,7 +21,7 @@ function SignIn(props) {
   };
 
   const validateMatricNum = (value) => {
-    const isValid = value.match(/^\d{2}\/\d{4}$/);
+    const isValid = value.match(/^\d{2}\/\d{4}$/) || value.match(/^\d{6}$/);
     setMatricNumError(isValid ? "" : "Improper matriculation format");
     return isValid;
   };

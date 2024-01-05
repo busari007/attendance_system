@@ -1,125 +1,107 @@
 import "../Styles/signUpPage.css";
 import logo from "../Pictures/babcock-logo.gif";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Axios from 'axios';
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-class SignUp extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = this.props.state;
-  }
-  handleChange(e){
-      const name = e.target.id;
-      const value = e.target.value;
-      this.setState({[name]:value},()=>{this.validateForm(name,value)});
-      console.log(this.state);
-  }
-  validateForm = (name,value) =>{
-    let usernameValid = this.state.usernameValid;
-    let emailValid = this.state.emailValid;
-    let passwordValid = this.state.passwordValid;
-    let matricNumValid = this.state.matricNumValid;
-    let Errors = this.state.Errors;
+function SignUp(props) {
+  const navigate = useNavigate();
+  const [state, setState] = useState(props.state);
+  const [usernameError, setUsernameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [matricNumError, setMatricNumError] = useState("");
+  const [formValid, setFormValid] = useState(false);
 
-    switch(name){
-      case 'username': 
-      usernameValid = value.length >= 5;
-      Errors.C_username = usernameValid ? '' : "Username too short";
-      if(this.state.username === ""){
-        usernameValid = false;
-        Errors.C_username = usernameValid ? '' : "Please enter your username";
-    }
-      break;
-
-      case 'email':
-          emailValid =  value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
-          Errors.C_email = emailValid ? '' : "Improper format";
-          if(this.state.email === ""){
-              emailValid = false;
-              Errors.C_email = emailValid ? '' : "Please enter an email";
-          }
-       break;
-
-      case 'password':
-          passwordValid = value.length >= 6;
-          Errors.C_password = passwordValid ? '' : "password is too short";
-          if(this.state.password === ""){
-            passwordValid = false;
-            Errors.C_password = passwordValid ? '' : "Please enter a password";
-        }
-          break;
-      
-      case 'matric_num':
-        matricNumValid = value.match(/^\d{2}\/\d{4}$/) || value.match(/^\d{6}$/);  
-        Errors.C_matricNum = matricNumValid ? '' : "Improper format";
-        if(this.state.matric_num === ""){
-          matricNumValid = false;
-          Errors.C_matricNum = matricNumValid ? '' : "Please enter your Matric Number/Application ID";
-      }
-        break;
-      default:
-      break;
-    }
-    this.setState({
-      usernameValid:usernameValid,
-      emailValid:emailValid,
-      passwordValid:passwordValid,
-      matricNumValid:matricNumValid,
-      Errors:Errors
-    }, this.confirmValidation);
-  }
-  confirmValidation= () => {
-    console.log(this.state.formValid);
-      this.setState({
-        formValid: this.state.usernameValid&&this.state.emailValid&&this.state.passwordValid&&this.state.matricNumValid,
-       // submitError:this.state.formValid
-      })
+  function handleInputChange(e, field) {
+    const value = e.target.value;
+    setState((prevState) => ({
+      ...prevState,
+      [field]: value
+    }));
   }
 
-  handleSubmit=(e)=>{
+  const validateUsername = (value) => {
+    const isValid = value.length >= 7 && value.length <= 11;
+    setUsernameError(isValid ? "" : "Please enter a username");
+    return isValid;
+  };
+
+  const validateEmail = (value) => {
+    const isValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i); //regex that translates to the email format
+    setEmailError(isValid ? "" : "Input a proper email");
+    return isValid;
+  };
+
+  const validatePassword = (value) => {
+    const isValid = value.length > 5;
+    setPasswordError(isValid ? "" : "Password too short");
+    return isValid;
+  };
+
+  const validateMatricNum = (value) => {
+    const isValid = value.match(/^\d{2}\/\d{4}$/) || value.match(/^\d{6}$/);
+    setMatricNumError(isValid ? "" : "Input a proper matriculation number");
+    return isValid;
+  };
+
+  useEffect(() => {
+    setFormValid(
+      validateUsername(state.username) &&
+      validateEmail(state.email) &&           
+      validatePassword(state.password) &&
+      validateMatricNum(state.matric_num)
+    );
+  }, [state.username,state.email,state.password,state.matric_num]);
+  
+
+  function handleSubmit(e) {
     e.preventDefault();
-   Axios.post('http://localhost:5000/register',{
-    username:this.state.username,
-    email:this.state.email,
-    password:this.state.password,
-    matric_num:this.state.matric_num,
-   }).then((res)=>{
-    const response = res.status;
-    console.log("Successfully submitted",response);
-    if(response === 200){
-      this.setState({result:true});
-    }
-   }).catch((err)=>{
-    console.log(err);
-   });
+    Axios.post('http://localhost:5000/register', {
+      username: state.username,
+      email: state.email,
+      password: state.password,
+      matric_num: state.matric_num,
+    }).then((res) => {
+      const { username, matric_num } = state;
+      const response = res.status;
+      console.log("Successfully submitted", response);
+      if (response === 200) {
+        setState({ result: true });
+        navigate('/home', { state: { username, matric_num }});  //navigates to Home.js and passes the username and matric number
+        window.alert("Account successfully created");
+      }
+    }).catch((err) => {
+      console.log(err);
+      window.alert("Error creating account");
+    });
   }
-  render(){
-  return(
+
+  return (
     <div>
       <div className="container">
-    <img  id="background_logo" src={logo} alt="background logo"/>
-      <form className="form" method="POST" onSubmit={(e)=>this.handleSubmit(e)}>
-        <h2 className="header">Sign Up</h2>
-        <label htmlFor="username">Username</label>
-        <label className="errors">{this.state.Errors.C_username}</label>
-        <input type="text" id="username" onChange={(e)=>this.handleChange(e)}/>
-        <label htmlFor="email">Email</label>
-        <label className="errors">{this.state.Errors.C_email}</label>
-        <input type="email"  id="email" onChange={(e)=>this.handleChange(e)}/>
-        <label htmlFor="password">Password</label>
-        <label className="errors">{this.state.Errors.C_password}</label>
-        <input type="password" id="password" onChange={(e)=>this.handleChange(e)}/>
-        <label htmlFor="matric_num">Matric Number/Applic ID</label>
-        <label className="errors">{this.state.Errors.C_matricNum}</label>
-        <input type="text" id="matric_num" onChange={(e)=>this.handleChange(e)}/>
-       {this.state.formValid? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
-        <button className="submit" disabled={!this.state.formValid}>Register {(this.state.result? true: false) && <Navigate to="/home"/>}</button>
-        <p id="signIn_link">Already have an account? Sign in <a className="links" href="/">here</a></p>
-      </form>
+        <img id="background_logo" src={logo} alt="background logo" />
+        <form className="form" method="POST" onSubmit={(e) => handleSubmit(e)}>
+          <h2 className="header">Sign Up</h2>
+          <label htmlFor="username">Username</label>
+          <label className="errors">{usernameError}</label>
+          <input type="text" id="username" onChange={(e) => handleInputChange(e, 'username')} />
+          <label htmlFor="email">Email</label>
+          <label className="errors">{emailError}</label>
+          <input type="email" id="email" onChange={(e) => handleInputChange(e, 'email')} />
+          <label htmlFor="password">Password</label>
+          <label className="errors">{passwordError}</label>
+          <input type="password" id="password" onChange={(e) => handleInputChange(e, 'password')} />
+          <label htmlFor="matric_num">Matric Number/Applic ID</label>
+          <label className="errors">{matricNumError}</label>
+          <input type="text" id="matric_num" onChange={(e) => handleInputChange(e, 'matric_num')} />
+          {formValid ? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
+          <button className="submit" disabled={!formValid}>Register</button>
+          <p id="signIn_link">Already have an account? Sign in <a className="links" href="/">here</a></p>
+        </form>
       </div>
     </div>
   );
-  }
 }
+
 export default SignUp;
