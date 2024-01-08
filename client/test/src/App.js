@@ -4,6 +4,7 @@ import SignIn from "./components/signInPage";
 import Home from "./components/Home";
 import AddCourses from "./components/addCourses";
 import Courses from "./components/Courses";
+import QrCode from "./components/QrCode";
 import { BrowserRouter,Routes, Route} from "react-router-dom";
 import React from "react";
 
@@ -42,6 +43,7 @@ class App extends React.Component{
             <Route path="/home" element={<Home username="bubu"/>}/>
             <Route path="/addCourses" element={<AddCourses/>}/>
             <Route path="/courses" element={<Courses />}/>
+            <Route path="/qrCode" element={<QrCode />}/>
        </Routes>    
        </BrowserRouter>
     </div>

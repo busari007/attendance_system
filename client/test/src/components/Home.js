@@ -47,6 +47,7 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
       <ul>
         <li><button className="sidebar-links" onClick={()=>{navigate('/courses', {state:{ username, matric_num }})}}>Course List</button></li>   {/*username and matric_num are passed into ./courses and ./addCourses as state in the navigate function*/}
         <li><button className="sidebar-links" onClick={()=>{navigate('/addCourses', {state:{ username, matric_num }})}}>Add Course</button></li>
+        <li><button style={{marginRight:'29.5%'}} className="sidebar-links" onClick={()=>{navigate('/qrCode', {state:{ username, matric_num }})}}>QRCode Generator</button></li> 
         <li><a style={{marginLeft:'31.5%'}} className="sidebar_content" href="/">Log Out</a></li>    
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
