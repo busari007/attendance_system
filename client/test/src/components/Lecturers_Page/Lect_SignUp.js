@@ -1,16 +1,15 @@
-import "./Styles/signUpPage.css";
-import logo from "./Pictures/babcock-logo.gif";
+import "../Styles/signUpPage.css";
+import logo from "../Pictures/babcock-logo.gif";
 import React, { useEffect, useState } from "react";
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
-function SignUp(props) {
+function LectSignUp(props) {
   const navigate = useNavigate();
   const [state, setState] = useState(props.state);
   const [usernameError, setUsernameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [matricNumError, setMatricNumError] = useState("");
   const [formValid, setFormValid] = useState(false);
 
   function handleInputChange(e, field) {
@@ -28,21 +27,22 @@ function SignUp(props) {
     }else if(value.length <= 4){
         setUsernameError("Username too short");
         return false;
-      }else if(value.length > 11){
+      }else if(value.length >= 12){
         setUsernameError("Username too long");
         return false;
       }else{
         setUsernameError("");
         return true;
       }
-  };
+    }
 
   const validateEmail = (value) => {
-    if (value.length === 0) {
-      setEmailError("Enter your email");
+    if (value === undefined) {
+      setEmailError("Email is required");
       return false;
     }
-    const isValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i); //regex that translates to the email format
+  
+    const isValid = value.match(/^([\w.%+-]+)@([\w-]+\.)+([\w]{2,})$/i);
     setEmailError(isValid ? "" : "Input a proper email");
     return isValid;
   };
@@ -58,42 +58,30 @@ function SignUp(props) {
     return isValid;
   };
 
-  const validateMatricNum = (value) => {
-    if (value.length === 0) {
-      setMatricNumError("Enter your Matriculation Number/ Application Id");
-      return false;
-    }
-
-    const isValid = value.match(/^\d{2}\/\d{4}$/) || value.match(/^\d{6}$/);
-    setMatricNumError(isValid ? "" : "Input a proper matriculation number");
-    return isValid;
-  };
-
   useEffect(() => {
     setFormValid(
-      validateUsername(state.username) &&
-      validateEmail(state.email) &&           
-      validatePassword(state.password) &&
-      validateMatricNum(state.matric_num)
+      validateUsername(state.lect_username) &&
+      validateEmail(state.lect_email) &&           
+      validatePassword(state.lect_password)
     );
-  }, [state.username,state.email,state.password,state.matric_num]);
+  }, [state.lect_username,state.lect_email,state.lect_password]);
   
 
   function handleSubmit(e) {
+    console.log(state);
     e.preventDefault();
-    Axios.post('http://localhost:5000/register', {
-      username: state.username,
-      email: state.email,
-      password: state.password,
-      matric_num: state.matric_num,
-      role: 'student'
+    Axios.post('http://localhost:5000/lectRegister', {
+      lect_email: state.lect_email,
+      lect_password: state.lect_password,
+      lect_username: state.lect_username,
+      role: 'lecturer'
     }).then((res) => {
-      const { username, matric_num } = state;
+      const { lect_username  } = state;
       const response = res.status;
       console.log("Successfully submitted", response);
       if (response === 200) {
         setState({ result: true });
-        navigate('/home', { state: { username, matric_num }});  //navigates to Home.js and passes the username and matric number
+        navigate('/lectHome', { state: { lect_username }});  //navigates to Home.js and passes the username and matric number
         window.alert("Account successfully created");
       }
     }).catch((err) => {
@@ -110,24 +98,21 @@ function SignUp(props) {
           <h2 className="header">Sign Up</h2>
           <label htmlFor="username">Username</label>
           <label className="errors">{usernameError}</label>
-          <input type="text" id="username" onChange={(e) => handleInputChange(e, 'username')} />
+          <input type="text" id="username" onChange={(e) => handleInputChange(e, 'lect_username')} />
           <label htmlFor="email">Email</label>
           <label className="errors">{emailError}</label>
-          <input type="email" id="email" onChange={(e) => handleInputChange(e, 'email')} />
+          <input type="email" id="email" onChange={(e) => handleInputChange(e, 'lect_email')} />
           <label htmlFor="password">Password</label>
           <label className="errors">{passwordError}</label>
-          <input type="password" id="password" onChange={(e) => handleInputChange(e, 'password')} />
-          <label htmlFor="matric_num">Matric Number/Applic ID</label>
-          <label className="errors">{matricNumError}</label>
-          <input type="text" id="matric_num" onChange={(e) => handleInputChange(e, 'matric_num')} />
+          <input type="password" id="password" onChange={(e) => handleInputChange(e, 'lect_password')} />
           {formValid ? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <button className="submit" disabled={!formValid}>Register</button>
-          <p id="signIn_link">Already have an account? Sign in <a className="links" href="/">here</a></p>
+          <p id="signIn_link">Already have an account? Sign in <a className="links" href="/lectSignIn">here</a></p>
         </form>
-        <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/lectSignUp">lecturer?</a></p>
+        <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/signUp">Student?</a></p>
       </div>
     </div>
   );
 }
 
-export default SignUp;
+export default LectSignUp;

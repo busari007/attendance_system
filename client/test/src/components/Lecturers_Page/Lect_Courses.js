@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaArrowLeft, FaBars, FaBell, FaCopyright } from 'react-icons/fa';
-import logo from "../Pictures/logo.jpg";
+import logo from '../Pictures/logo.jpg';
 import  Axios  from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-function Courses(props){
+function LectCourses(props){
     const location = useLocation();
-    const { username, matric_num } = location.state;  // Recieves the username and matric number 
+    const { lect_username, lect_id } = location.state;  // Recieves the username and matric number 
     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [isOpen, setOpen] = useState(false);
@@ -25,8 +25,8 @@ function Courses(props){
       
 
     useEffect(() => {
-        Axios.post("http://localhost:5000/getCourses",{
-          matric_num: matric_num   //uses the matric number to filter the courses table to send only courses with the matric numbers value(its a foreign key in the db)
+        Axios.post("http://localhost:5000/getLectCourses",{
+          lect_id: lect_id  //uses the matric number to filter the courses table to send only courses with the matric numbers value(its a foreign key in the db)
         })
         .then((response) => {
           // Set the courses state with the fetched data
@@ -42,7 +42,7 @@ function Courses(props){
         return () => {
           document.removeEventListener('mousedown', handleOutsideClick);
         };
-      }, [matric_num]);
+      }, [lect_id]);
 
    return(
     <div>
@@ -50,7 +50,7 @@ function Courses(props){
       <FaBars className="icons" onClick={handleToggle} />
       <img className="as_logo" src={logo} alt="logo"/>
       <h2 className="page_name">Course List</h2>
-    <p className="welcome_text">Welcome, {username}</p>
+    <p className="welcome_text">Welcome, {lect_username || "Guest"}</p>
     <FaBell className="icons"/>
     </nav> 
     <div className={`sidebar ${isOpen ? 'open' : 'close'}`} ref={sidebarRef}>
@@ -59,10 +59,10 @@ function Courses(props){
        <h2>UAS</h2>
       </div>
       <ul>
-        <li><button style={{marginLeft:'35.5%'}} className="sidebar-links" onClick={()=>{navigate('/home', {state:{ username, matric_num }})}}>Home</button></li>
-        <li><button className="sidebar-links" onClick={()=>{navigate('/addCourses', {state:{ username, matric_num }})}}>Add Courses</button></li>
-        <li><button style={{marginRight:'29.5%'}} className="sidebar-links" onClick={()=>{navigate('/qrCode', {state:{ username, matric_num }})}}>QRCode Generator</button></li> 
-        <li><a style={{marginLeft:'32.5%'}} className="sidebar_content" href="/">Log Out</a></li>      
+        <li><button style={{marginLeft:'35.5%'}} className="sidebar-links" onClick={()=>{navigate('/lectHome', {state:{ lect_username, lect_id }})}}>Home</button></li>
+        <li><button className="sidebar-links" onClick={()=>{navigate('/lectAddCourses', {state:{ lect_username, lect_id }})}}>Add Courses</button></li>
+        <li><button style={{marginRight:'29.5%'}} className="sidebar-links" onClick={()=>{navigate('/qrCode', {state:{ lect_username, lect_id }})}}>QRCode Generator</button></li> 
+        <li><a style={{marginLeft:'32.5%'}} className="sidebar_content" href="/lectSignIn">Log Out</a></li>      
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
@@ -70,7 +70,7 @@ function Courses(props){
     <div className="course_container" style={{ marginTop:'2%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
     <ul>
         {courses.map((course) => (  //displays the courses fetched
-          <li style={{margin:'2%'}}>
+          <li key={lect_id} style={{margin:'2%'}}>
             {course.course_name} - {course.course_code}
           </li>
         ))}
@@ -80,4 +80,4 @@ function Courses(props){
    );
 }
 
-export default Courses;
+export default LectCourses;

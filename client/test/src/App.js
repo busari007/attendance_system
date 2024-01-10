@@ -1,10 +1,15 @@
-import "./Styles/App.css";
-import SignUp from "./components/signUpPage";
+import "./App.css";
+import SignUp from "./components//signUpPage";
 import SignIn from "./components/signInPage";
-import Home from "./components/Home";
-import AddCourses from "./components/addCourses";
-import Courses from "./components/Courses";
-import QrCode from "./components/QrCode";
+import Home from "./components/Students_Page/Home";
+import AddCourses from "./components/Students_Page/addCourses";
+import Courses from "./components/Students_Page/Courses";
+import QrCode from "./components/Lecturers_Page/QrCode";
+import LectSignIn from "./components/Lecturers_Page/Lect_SignIn";
+import LectSignUp from "./components/Lecturers_Page/Lect_SignUp";
+import LectHome from "./components/Lecturers_Page/Lect_Home";
+import LectAddCourses from "./components/Lecturers_Page/Lect_AddCourses";
+import LectCourses from "./components/Lecturers_Page/Lect_Courses";
 import { BrowserRouter,Routes, Route} from "react-router-dom";
 import React from "react";
 
@@ -13,9 +18,12 @@ class App extends React.Component{
   constructor(){
     super();
   this.state={
+      lect_id:"",
       username:"",
+      lect_username:"",
       matric_num:"",
       password:"",
+      lect_password:"",
       matricNum_valid:false,
       password_valid:false,
       homesRender:false,
@@ -40,10 +48,15 @@ class App extends React.Component{
         <Routes>
             <Route path="/" element={<SignIn state={this.state}/>}/>
             <Route path="/signUp" element={<SignUp state={this.state}/>}/>  
-            <Route path="/home" element={<Home username="bubu"/>}/>
+            <Route path="/home" element={<Home />}/>
             <Route path="/addCourses" element={<AddCourses/>}/>
             <Route path="/courses" element={<Courses />}/>
             <Route path="/qrCode" element={<QrCode />}/>
+            <Route path="/lectSignUp" element={<LectSignUp state={this.state}/>}/>
+            <Route path="/lectSignIn" element={<LectSignIn state={this.state}/>}/>
+            <Route path="/lectHome" element={<LectHome />}/>
+            <Route path="/lectAddCourses" element={<LectAddCourses />}/>
+            <Route path="/lectCourses" element={<LectCourses />}/>
        </Routes>    
        </BrowserRouter>
     </div>

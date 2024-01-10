@@ -1,33 +1,39 @@
 import React, { useState, useEffect } from "react";
-import logo from "./Pictures/babcock-logo.gif";
+import logo from "../Pictures/babcock-logo.gif";
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
-function SignIn(props) {
+function LectSignIn(props) {
     const navigate = useNavigate();
   const [state, setState] = useState(props.state);
-  const [matricNumError, setMatricNumError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [formValid, setFormValid] = useState(false);
 
-  const handleMatricNumChange = (e) => {
+  const handleUsernameChange = (e) => {
     const newValue = e.target.value;
-    setState((prevState) => ({ ...prevState, matric_num: newValue }));
+    setState((prevState) => ({ ...prevState, lect_username: newValue }));
   };
 
   const handlePasswordChange = (e) => {
     const newValue = e.target.value;
-    setState((prevState) => ({ ...prevState, password: newValue }));
+    setState((prevState) => ({ ...prevState, lect_password: newValue }));
   };
 
-  const validateMatricNum = (value) => {
+  const validateUsername = (value) => {
     if (value.length === 0) {
-      setMatricNumError("Enter your Matriculation Number/ Application Id");
+      setUsernameError("Enter your username");
       return false;
-    }
-    const isValid = value.match(/^\d{2}\/\d{4}$/) || value.match(/^\d{6}$/);
-    setMatricNumError(isValid ? "" : "Improper matriculation format");
-    return isValid;
+    }else if(value.length <= 4){
+        setUsernameError("Username too short");
+        return false;
+      }else if(value.length >= 12){
+        setUsernameError("Username too long");
+        return false;
+      }else{
+        setUsernameError("");
+        return true;
+      }
   };
 
   const validatePassword = (value) => {
@@ -41,23 +47,23 @@ function SignIn(props) {
   };
 
   useEffect(() => {
-    setFormValid(validateMatricNum(state.matric_num) && validatePassword(state.password));
-  }, [state.matric_num, state.password]);
+    setFormValid(validateUsername(state.lect_username) && validatePassword(state.lect_password));
+  }, [state.lect_username, state.lect_password]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post('http://localhost:5000/logIn', {
-      matric_num: state.matric_num,
-      password: state.password
+    Axios.post('http://localhost:5000/lectLogIn', {
+      lect_username: state.lect_username,
+      lect_password: state.lect_password
     }).then((response) => {
       console.log("Server response: ", response);
       if (response.status === 200) {
-        const { username, matric_num ,success } = response.data;
+        const { lect_username, lect_id ,success } = response.data;
         console.log("Successfully Validated");
-        console.log(username);
-        setState((prevState) => ({ ...prevState, username: username, matric_num: matric_num ,result: success, homesRender: true }));
+        console.log(lect_username);
+        setState((prevState) => ({ ...prevState, lect_username: lect_username, lect_id: lect_id ,result: success, homesRender: true }));
         console.log("username in sign in: ", state.username);
-        navigate('/home', {state:{ username, matric_num }} );
+        navigate('/lectHome', {state:{ lect_username, lect_id }} );
       } else {
         console.log(response.status);
       }
@@ -75,20 +81,20 @@ function SignIn(props) {
         <img id="background_logo" src={logo} alt="background logo" />
         <form className="form" onSubmit={(e) => handleSubmit(e)}>
           <h1 className="header">Sign In</h1>
-          <label htmlFor="Matric_num">Matric Number/Application ID</label>
-          <label className="errors">{matricNumError}</label>
-          <input type="text" id="matric_num" onChange={handleMatricNumChange} />
+          <label htmlFor="Matric_num">Username</label>
+          <label className="errors">{usernameError}</label>
+          <input type="text" id="username" onChange={handleUsernameChange} />
           <label htmlFor="password">Password</label>
           <label className="errors">{passwordError}</label>
           <input type="password" id="password" onChange={handlePasswordChange} />
           {formValid ? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <button className="submit" disabled={!formValid}>{"Log In"}</button>
-          <p id="signIn_link">Don't have an account? Sign up <a className="links" href="/signUp">here</a></p>
+          <p id="signIn_link">Don't have an account? Sign up <a className="links" href="/lectSignUp">here</a></p>
         </form>
-        <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/lectSignIn">lecturer?</a></p>
+        <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/">Student?</a></p>
       </div>
     </div>
   );
 }
 
-export default SignIn;
+export default LectSignIn;
