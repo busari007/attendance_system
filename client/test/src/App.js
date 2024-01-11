@@ -10,6 +10,7 @@ import LectSignUp from "./components/Lecturers_Page/Lect_SignUp";
 import LectHome from "./components/Lecturers_Page/Lect_Home";
 import LectAddCourses from "./components/Lecturers_Page/Lect_AddCourses";
 import LectCourses from "./components/Lecturers_Page/Lect_Courses";
+import QRCodeScanner from "./components/Students_Page/QRCodeScanner";
 import { BrowserRouter,Routes, Route} from "react-router-dom";
 import React from "react";
 
@@ -57,6 +58,7 @@ class App extends React.Component{
             <Route path="/lectHome" element={<LectHome />}/>
             <Route path="/lectAddCourses" element={<LectAddCourses />}/>
             <Route path="/lectCourses" element={<LectCourses />}/>
+            <Route path="/qrCodeScanner" element={<QRCodeScanner />}/>
        </Routes>    
        </BrowserRouter>
     </div>
