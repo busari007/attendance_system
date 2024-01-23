@@ -217,10 +217,10 @@ ul{
 }
 
 .qrCode{
-   margin-left: 25.3%;
+   margin-left: 37.9%;
    margin-bottom: 2%;
-   width: 50%;
-   height: 50%;
+   width: 25%;
+   height: 25%;
 }
 
 .qrButton {
@@ -235,7 +235,7 @@ ul{
 }
 
 .qrButton.before {
-  margin-top: 8%;
+  margin-top: 2%;
 }
 
 .qrButton.after {

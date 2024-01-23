@@ -115,6 +115,7 @@ const QrCode = () => {
         <QRCode className='qrCode' value={qrCode} />
       }
       <button
+        style={{marginTop:"-5%"}}
         onClick={handleQRCode}
         className={`qrButton ${isCodeGenerated ? 'after' : 'before'}`}
       >
