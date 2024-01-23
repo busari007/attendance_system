@@ -102,7 +102,7 @@ const QrCode = () => {
         <FaCopyright style={{ position: "absolute", bottom: 5, left: 5, fontSize: 30, color: '#2a2aaf' }} />
       </div>
       <div className="qr_courses">
-        <label>Pick a course:</label>
+        <label className='codeTitle'>Pick a course:</label>
         <select name="data" onChange={(e) => handleChange(e)}>
         {courses && courses.map((course) => (
   <option key={course.course_code || 1} value={`${course.course_name || ''} ${course.course_code || ''}`}>
@@ -118,7 +118,7 @@ const QrCode = () => {
         onClick={handleQRCode}
         className={`qrButton ${isCodeGenerated ? 'after' : 'before'}`}
       >
-        Generate
+        {isCodeGenerated ? 'X' : 'Generate'}
       </button>
     </div>
   );

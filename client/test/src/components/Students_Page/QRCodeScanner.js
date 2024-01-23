@@ -23,7 +23,7 @@ function QRCodeScanner(props){
     
     const handleDisplay = () =>{
         setDisplay(!display);
-        setIsCodeGenerated(true);
+        setIsCodeGenerated(!isCodeGenerated);
     }
 
     const handleScan = (res) => {
@@ -75,14 +75,14 @@ function QRCodeScanner(props){
         return () => {
           document.removeEventListener('mousedown', handleOutsideClick);
         };
-      }, [matric_num, result.data]);
+      }, [matric_num, result.data,isCodeGenerated]);
 
    return(
     <div>
          <nav className="Header">
       <FaBars className="icons" onClick={handleToggle} />
       <img className="as_logo" src={logo} alt="logo"/>
-      <h2 className="page_name">QRCode Scanner</h2>
+      <h2 className="page_name">Scanner</h2>
     <p className="welcome_text">Welcome, {username || "Guest"}</p>
     <FaBell className="icons"/>
     </nav> 
@@ -100,7 +100,7 @@ function QRCodeScanner(props){
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
 
-    <div className="course_container" style={{ marginTop:'2%', marginLeft:'39.7%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
+    <div>
     {display && <QrReader
        className='qrReader'
         delay={delay}
@@ -110,10 +110,9 @@ function QRCodeScanner(props){
       /> }
       <button
         onClick={handleDisplay}
-        style={{marginTop:'18%',marginLeft:'17.5%'}}
         className={`qrButton ${isCodeGenerated ? 'after' : 'before'}`}
       >
-        Display
+        {isCodeGenerated ? 'X' : 'Display'}
       </button>
       </div>
     </div>
