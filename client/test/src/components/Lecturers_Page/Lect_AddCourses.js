@@ -110,7 +110,7 @@ const LectAddCourses = (props)=> {
       <input type="text" id="course_name" placeholder="Course Name" onChange={(e)=>handleChange(e)}/>
       <input type="text" id="course_code" placeholder="Course Code" onChange={(e)=>handleChange(e)}/>
       </div>
-      <h1 style={{color:'#0000EE', visibility:"hidden"}}>Go to Course List to check list of courses</h1>
+      {/*<h1 style={{color:'#0000EE', visibility:"hidden"}}>Go to Course List to check list of courses</h1>*/}
     </div>
     <button id="course_submit" className="submit" onClick={(e)=>handleSubmit(e)}>Submit</button>
     </div>
