@@ -126,3 +126,43 @@
     }
   }
   
+  @media (max-width: 720px) {
+    .container {
+      flex-direction:row;
+      position: relative;
+      top: 0;
+      left: 0;
+      margin: 23vh 2vh;
+      width: 95%;
+      height: auto; 
+    }
+
+    #background_logo {
+      width: 50%;
+      max-height: 53vh; 
+      border-radius: 20px 20px 0 0;
+    }
+  
+    .header {
+      font-size: 5vw; 
+      margin: 1.5%;
+    }
+  
+    .form {
+      font-size: 3vw;
+      width: 90%;
+      margin-left: 0;
+      margin-bottom: 1%;
+    }
+    .form input{
+      border-radius: 8px;
+      box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .submit{
+      font-size: 3vw;
+      margin-top: 1%;
+      margin-bottom: 1%;
+      border-radius: 10px;
+    }
+  }

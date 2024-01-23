@@ -84,8 +84,8 @@ function SignIn(props) {
           <button className="submit" disabled={!formValid}>{"Log In"}</button>
           <p id="signIn_link">Don't have an account? Sign up <a className="links" href="/signUp">here</a></p>
         </form>
-        <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/lectSignIn">lecturer?</a></p>
-      </div>
+     </div>
+     <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/lectSignIn">lecturer?</a></p>
     </div>
   );
 }
