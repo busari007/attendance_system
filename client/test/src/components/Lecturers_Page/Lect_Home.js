@@ -25,7 +25,7 @@ function LectHome(){
 };
 
 useEffect(() => {  //To handle the click event that closes the sidebar outside the sidebar
-    Axios.post('http://localhost:5000/lectId',{
+    Axios.post('https://vercel-backend-test-azure.vercel.app/lectId',{
         lect_username: lect_username
     }).then(({ data: { lect_id } }) => {
         setLectId(lect_id);

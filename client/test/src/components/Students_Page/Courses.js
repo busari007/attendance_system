@@ -25,7 +25,7 @@ function Courses(props){
       
 
     useEffect(() => {
-        Axios.post("http://localhost:5000/getCourses",{
+        Axios.post("https://vercel-backend-test-azure.vercel.app/getCourses",{
           matric_num: matric_num   //uses the matric number to filter the courses table to send only courses with the matric numbers value(its a foreign key in the db)
         })
         .then((response) => {

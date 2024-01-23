@@ -52,7 +52,7 @@ function LectSignIn(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post('http://localhost:5000/lectLogIn', {
+    Axios.post('https://vercel-backend-test-azure.vercel.app/lectLogIn', {
       lect_username: state.lect_username,
       lect_password: state.lect_password
     }).then((response) => {

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import logo from '../Pictures/logo.jpg';
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import Axios  from "axios";
 
 function Home (){
   const location = useLocation();
@@ -11,6 +12,7 @@ function Home (){
   const navigate = useNavigate();  //To navigate through routes
  const [isOpen, setOpen] = useState(false); //To set slidebar to appear or disappear
  const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
+ const [attendance, setAttendance] = useState([]);
 
  function handleToggle(){
      setOpen(!isOpen);
@@ -23,12 +25,22 @@ function Home (){
 };
 
 useEffect(() => {  //To handle the click event that closes the sidebar outside the sidebar
+  Axios.post('https://vercel-backend-test-azure.vercel.app/getAttendance',{
+    matric_num: matric_num
+  }).then((res)=>{
+      setAttendance(res.data.records);
+      console.log(attendance);
+      console.log("Attendance data recieved");
+  }).catch((err)=>{
+    window.alert('Error recieving courses');
+    console.log(err);
+  });
   document.addEventListener('mousedown', handleOutsideClick);   
 
   return () => {
     document.removeEventListener('mousedown', handleOutsideClick);
   };
-}, []);
+}, [matric_num]);
 
     return (
       <div>
@@ -52,6 +64,18 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
+    <div style={{marginTop:'3.5%'}} className="records_container">
+  {attendance.map((data, index) => (
+    <div key={index}>
+      <p>Course ID: {data.course_id}</p>
+      <p>Attendance Date: {data.attendanceDate}</p>
+      <p>Course: {data.course_name} {data.course_code}</p>
+      <p>Status: {data.Status}</p>
+    </div>
+  ))}
+  {attendance.length === 0 && 'No attendance data yet'}
+</div>
+
     </div>
     );
   }

@@ -3,18 +3,19 @@ import { FaArrowLeft, FaBars, FaBell, FaCopyright } from 'react-icons/fa';
 import QrReader from 'react-web-qr-reader';
 import logo from '../Pictures/logo.jpg';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Axios from 'axios';
 
 function QRCodeScanner(props){
     const location = useLocation();
     const { username, matric_num } = location.state;  // Recieves the username and matric number 
     const navigate = useNavigate();
-    const delay = 500;
+    const delay = 2000;
     const previewStyle = {
       height: 240,
       width: 320,
     };
     const [display, setDisplay] = useState(false);
-    const [result, setResult] = useState('No result');
+    const [result, setResult] = useState([]);
     //const [courses, setCourses] = useState([]);
     const [isOpen, setOpen] = useState(false);
     const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
@@ -25,10 +26,10 @@ function QRCodeScanner(props){
         setIsCodeGenerated(true);
     }
 
-    const handleScan = (result) => {
-        if (result) {
-          setResult(result);
-          console.log(result);
+    const handleScan = (res) => {
+        if (res) {
+          setResult(res);
+          console.log(res.data);
         }
       };
     
@@ -50,12 +51,31 @@ function QRCodeScanner(props){
       
 
     useEffect(() => {
+       Axios.post('https://vercel-backend-test-azure.vercel.app/getCourseId',{
+        course_code: result.data, 
+       matric_num: matric_num
+       }).then((res)=>{
+        const { course_id } = res.data[0];
+        Axios.post('https://vercel-backend-test-azure.vercel.app/attendance',{
+          matric_num: matric_num,
+          course_id: course_id,
+          Status: 'Present'
+        }).then((res)=>{
+          window.alert('Attendance successfully recorded');
+          console.log(res);
+        }).catch((err)=>{
+          console.log(err);
+        })
+       }).catch((err)=>{
+        console.log(err);
+       })
+
         document.addEventListener('mousedown', handleOutsideClick);
       
         return () => {
           document.removeEventListener('mousedown', handleOutsideClick);
         };
-      }, []);
+      }, [matric_num, result.data]);
 
    return(
     <div>
@@ -80,7 +100,7 @@ function QRCodeScanner(props){
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
 
-    <div className="course_container" style={{ marginTop:'2%', marginLeft:'40%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
+    <div className="course_container" style={{ marginTop:'2%', marginLeft:'39.7%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
     {display && <QrReader
        className='qrReader'
         delay={delay}
@@ -88,10 +108,9 @@ function QRCodeScanner(props){
         onError={handleError}
         onScan={handleScan}
       /> }
-      <p style={{ marginTop:'11%', marginLeft:'16.5%' }}>{/*result*/}</p>
       <button
         onClick={handleDisplay}
-        style={{marginTop:'2%',marginLeft:'18%'}}
+        style={{marginTop:'18%',marginLeft:'17.5%'}}
         className={`qrButton ${isCodeGenerated ? 'after' : 'before'}`}
       >
         Display
@@ -102,3 +121,4 @@ function QRCodeScanner(props){
 }
 
 export default QRCodeScanner;
+

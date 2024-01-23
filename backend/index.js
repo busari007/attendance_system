@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -199,6 +200,76 @@ app.post('/getLectCourses', (req, res) => {
       } else {
         res.status(401).json({ success: false, message: 'Lecturers ID not found' });
       }
+    }
+  });
+});
+
+
+app.post('/attendance', async (req, res) => {  // to take attendance
+  try {
+    const { matric_num, course_id, status } = req.body;
+
+    // Insert data into the Attendance table
+    await db.query(
+      'INSERT INTO attendance (matric_num, course_id, Status) VALUES (?, ?, "Present")',
+      [matric_num, course_id, status]
+    );
+
+    console.log('Attendance record inserted successfully.');
+    res.json({message:'Attendance record inserted successfully!'});
+  } catch (error) {
+    console.error('Error inserting attendance record:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// To get attendance records
+app.post('/getAttendance', (req, res) => {
+  const { matric_num } = req.body;
+
+  // To select relevant fields from both attendance and courses tables(course code)
+  const query = `
+    SELECT
+      a.attendanceID,
+      a.matric_num,
+      a.course_id,
+      a.attendanceDate,
+      a.Status,
+      c.course_code,
+      c.course_name
+    FROM
+      attendance a
+    INNER JOIN
+      courses c ON a.course_id = c.course_id
+    WHERE
+      a.matric_num = ?;
+  `;
+
+  db.query(query, [matric_num], (err, result) => {
+    if (err) {
+      console.error("Query Error", err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    } else {
+      if (result.length > 0) {
+        res.json({ records: result, success: true });
+      } else {
+        res.status(401).json({ success: false, message: 'No attendance records found for the specified matric_num' });
+      }
+    }
+  });
+});
+
+
+//To get the course_id for recording attendance
+app.post('/getCourseId', (req, res) => {
+  const { matric_num, course_code } = req.body;
+  db.query('SELECT c.course_id FROM courses c INNER JOIN users u ON c.matric_num = u.matric_num WHERE c.course_code = ? AND u.matric_num = ?'
+  , [ course_code, matric_num],(err, result) => {
+    if (err) {
+      console.error('Error executing the SELECT query:', err);
+      res.status(500).send('Error retrieving data from the database');
+    } else {
+      res.json(result);
     }
   });
 });

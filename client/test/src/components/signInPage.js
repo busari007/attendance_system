@@ -46,7 +46,7 @@ function SignIn(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post('http://localhost:5000/logIn', {
+    Axios.post('https://vercel-backend-test-azure.vercel.app/logIn', {
       matric_num: state.matric_num,
       password: state.password
     }).then((response) => {
@@ -54,7 +54,6 @@ function SignIn(props) {
       if (response.status === 200) {
         const { username, matric_num ,success } = response.data;
         console.log("Successfully Validated");
-        console.log(username);
         setState((prevState) => ({ ...prevState, username: username, matric_num: matric_num ,result: success, homesRender: true }));
         console.log("username in sign in: ", state.username);
         navigate('/home', {state:{ username, matric_num }} );

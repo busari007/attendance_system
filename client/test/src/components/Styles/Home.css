@@ -246,3 +246,15 @@ ul{
 .qrButton:hover {
   background-color: #45a049;
 }
+
+
+.records_container{
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  display: flex;
+  border-radius: 5px;
+  border: 0.55px solid rgb(0, 0, 0, 0.45);
+  width: 45%;
+  margin-left: 27%;
+  padding: 1%;
+  padding-left: 3%;
+}

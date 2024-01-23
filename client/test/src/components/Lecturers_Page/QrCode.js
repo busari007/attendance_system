@@ -30,7 +30,7 @@ const QrCode = () => {
     }
     console.log(qrCode);
       // Extract the specific properties and concatenate them into a string, If not the qr code will not return the value but [object Object] instead
-  const qrCodeValue = `${data.course_name || ''} ${data.course_code || ''}`;
+  const qrCodeValue = `${data.course_code || ''}`;
 
   // Set the QR code with the concatenated string
   setQRCode(qrCodeValue);
@@ -48,7 +48,7 @@ const QrCode = () => {
   };
 
   useEffect(() => {
-    Axios.post("http://localhost:5000/getLectCourses", {
+    Axios.post("https://vercel-backend-test-azure.vercel.app/getLectCourses", {
       lect_id: lect_id
     })
       .then((response) => {
