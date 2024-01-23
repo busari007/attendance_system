@@ -84,7 +84,7 @@ const QrCode = () => {
       <nav className="Header">
         <FaBars className="icons" onClick={handleToggle} />
         <img className="as_logo" src={logo} alt="logo" />
-        <h2 className="page_name">QRCode Generator</h2>
+        <h2 className="page_name">Generator</h2>
         <p className="welcome_text">Welcome, {lect_username || "Guest"}</p>
         <FaBell className="icons" />
       </nav>
