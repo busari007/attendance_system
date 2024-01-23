@@ -34,7 +34,7 @@ const QrCode = () => {
 
   // Set the QR code with the concatenated string
   setQRCode(qrCodeValue);
-    setIsCodeGenerated(true);
+    setIsCodeGenerated(!isCodeGenerated);
   }
 
   function handleToggle() {
