@@ -29,7 +29,7 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
     matric_num: matric_num
   }).then((res)=>{
       setAttendance(res.data.records);
-      console.log(attendance);
+      console.log(res.data.records);
       console.log("Attendance data recieved");
   }).catch((err)=>{
     window.alert('Error recieving courses');
@@ -66,12 +66,25 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
     </div>
     <div style={{marginTop:'3.5%'}} className="records_container">
   {attendance.map((data, index) => (
-    <div key={index}>
-      <p>Course ID: {data.course_id}</p>
-      <p>Attendance Date: {data.attendanceDate}</p>
-      <p>Course: {data.course_name} {data.course_code}</p>
-      <p>Status: {data.Status}</p>
-    </div>
+   <table className="attendanceTable" key={index}>
+    <caption>{data.course_name} - {data.course_code}</caption>
+   <thead>
+     <tr>
+      <th>Attendance Date</th>
+      <th>Attendance Time</th>
+      <th>Status</th>
+     </tr>
+   </thead>
+   <tbody>
+   {attendance.map((entry, entryIndex) => (
+      <tr key={entryIndex}>
+        <td>{entry.dateTaken}</td>
+        <td>{entry.timeTaken}</td>
+        <td>{entry.Status}</td>
+      </tr>
+    ))}
+   </tbody>
+ </table>
   ))}
   {attendance.length === 0 && 'No attendance data yet'}
 </div>

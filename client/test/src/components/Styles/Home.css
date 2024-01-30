@@ -265,6 +265,27 @@ ul{
   padding: 5%;
 }
 
+.attendanceTable {
+  border: 1px solid #02022f24;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden; /* Ensures the border-radius is applied properly */
+}
+
+.attendanceTable th, .attendanceTable td {
+  border: 1px solid #02022f24;
+  padding: 8px;
+  text-align: left;
+}
+
+.attendanceTable tbody tr:nth-child(odd) {
+  background-color: #ddd5d5; /* Background color for odd rows */
+}
+
+.attendanceTable tbody tr:nth-child(even) {
+  background-color: #d3d3d3; /* Background color for even rows */
+}
+
 @media (max-width: 720px) {
   .welcome_text{
    font-size: 3vw;

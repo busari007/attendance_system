@@ -233,7 +233,8 @@ app.post('/getAttendance', (req, res) => {
       a.attendanceID,
       a.matric_num,
       a.course_id,
-      a.attendanceDate,
+      a.dateTaken,
+      a.timeTaken,
       a.Status,
       c.course_code,
       c.course_name
