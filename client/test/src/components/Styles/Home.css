@@ -256,7 +256,7 @@ ul{
 
 .records_container{
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  display: flex;
+  display: block;
   margin-top: 2%;
   margin-left: 12.7%;
   border: none;
@@ -326,7 +326,7 @@ ul{
   .qrButton.after {
     margin-top: 22%;
     background-color: red;
-    margin-left: 45vw;
+    margin-right: 2%;
   }
   .course_container{
     margin-top: 2.5%;
@@ -355,5 +355,13 @@ ul{
 
   .codeTitle{
     font-size: 4.5vw;
+  }
+
+  .qrCode{
+    width: 55%;
+    height: 55%;
+    margin-top: 5%;
+    margin-bottom: 7%;
+    margin-left: 23.5%;
   }
 }

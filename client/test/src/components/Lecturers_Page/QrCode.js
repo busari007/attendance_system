@@ -19,21 +19,19 @@ const QrCode = () => {
 
   function handleChange(e) {
     let value = e.target.value;
-    setData(value);
+    let [courseName, courseCode] = value.split(" ");
+    setData({ course_name: courseName, course_code: courseCode });
+    setIsCodeGenerated(false);
   }
 
   function handleQRCode() {
-      // Check if the courses array is empty and display an alert window to indicate so
-    if (courses[0].course_name === 'No Courses') {
-      window.alert("You havent registered your courses");
+    if (!data || !data.course_name || !data.course_code) {
+      window.alert("Please register a valid course");
       return;
     }
-    console.log(qrCode);
-      // Extract the specific properties and concatenate them into a string, If not the qr code will not return the value but [object Object] instead
-  const qrCodeValue = `${data.course_code || ''}`;
 
-  // Set the QR code with the concatenated string
-  setQRCode(qrCodeValue);
+    const qrCodeValue = `${data.course_code || ''}`;
+    setQRCode(qrCodeValue);
     setIsCodeGenerated(!isCodeGenerated);
   }
 
@@ -104,15 +102,15 @@ const QrCode = () => {
       <div className="qr_courses">
         <label className='codeTitle'>Pick a course:</label>
         <select name="data" onChange={(e) => handleChange(e)}>
-        {courses && courses.map((course) => (
-  <option key={course.course_code || 1} value={`${course.course_name || ''} ${course.course_code || ''}`}>
-    {course.course_name} {course.course_code}
-  </option>
-))}
+          {courses && courses.map((course) => (
+            <option key={course.course_code || 1} value={`${course.course_name || ''} ${course.course_code || ''}`}>
+              {course.course_name} {course.course_code}
+            </option>
+          ))}
         </select>
       </div>
       {isCodeGenerated &&
-        <QRCode className='qrCode' value={qrCode} />
+        <QRCode className={`qrCode`} value={qrCode} />
       }
       <button
         style={{marginTop:"-5%"}}

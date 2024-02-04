@@ -42,6 +42,8 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
   };
 }, [matric_num]);
 
+const uniqueCourses = Array.from(new Set(attendance.map(data => data.course_id))); //This extracts unique course IDs from the attendance data. The Set object is used to eliminate duplicate course IDs, and then Array.from is used to convert the set back into an array.
+
     return (
       <div>
         <nav className="Header">
@@ -65,27 +67,31 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
     <div style={{marginTop:'3.5%'}} className="records_container">
-  {attendance.map((data, index) => (
-   <table className="attendanceTable" key={index}>
-    <caption>{data.course_name} - {data.course_code}</caption>
-   <thead>
-     <tr>
-      <th>Attendance Date</th>
-      <th>Attendance Time</th>
-      <th>Status</th>
-     </tr>
-   </thead>
-   <tbody>
-   {attendance.map((entry, entryIndex) => (
-      <tr key={entryIndex}>
-        <td>{entry.dateTaken}</td>
-        <td>{entry.timeTaken}</td>
-        <td>{entry.Status}</td>
-      </tr>
-    ))}
-   </tbody>
- </table>
-  ))}
+    {uniqueCourses.map(courseId => {
+      const courseData = attendance.filter(data => data.course_id === courseId);
+
+      return (
+        <table className="attendanceTable" key={courseId}>
+          <caption>{courseData[0].course_name} - {courseData[0].course_code}</caption>
+          <thead>
+            <tr>
+              <th>Attendance Date</th>
+              <th>Attendance Time</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {courseData.map((entry, entryIndex) => (
+              <tr key={entryIndex}>
+                <td>{entry.dateTaken}</td>
+                <td>{entry.timeTaken}</td>
+                <td>{entry.Status}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    })}
   {attendance.length === 0 && 'No attendance data yet'}
 </div>
 
@@ -94,3 +100,5 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
   }
 
 export default Home;
+
+

@@ -33,7 +33,7 @@ const db = mysql.createConnection({
   host:'localhost',
   user:'busari007',
   password:'obey4show',
-  database:'user_accounts'
+  database:'test'
 });
 
 db.connect((err)=>{
@@ -227,14 +227,13 @@ app.post('/attendance', async (req, res) => {  // to take attendance
 app.post('/getAttendance', (req, res) => {
   const { matric_num } = req.body;
 
-  // To select relevant fields from both attendance and courses tables(course code)
   const query = `
     SELECT
       a.attendanceID,
       a.matric_num,
       a.course_id,
-      a.dateTaken,
-      a.timeTaken,
+      DATE_FORMAT(a.dateTaken, '%d-%m-%Y') AS dateTaken,
+      TIME_FORMAT(a.timeTaken, '%H:%i') AS timeTaken,
       a.Status,
       c.course_code,
       c.course_name
