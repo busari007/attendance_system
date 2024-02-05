@@ -75,8 +75,8 @@ const uniqueCourses = Array.from(new Set(attendance.map(data => data.course_id))
           <caption>{courseData[0].course_name} - {courseData[0].course_code}</caption>
           <thead>
             <tr>
-              <th>Attendance Date</th>
-              <th>Attendance Time</th>
+              <th>Attendance date</th>
+              <th>Attendance time</th>
               <th>Status</th>
             </tr>
           </thead>

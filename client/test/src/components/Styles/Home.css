@@ -269,7 +269,11 @@ ul{
   border: 1px solid #02022f24;
   border-collapse: collapse;
   border-radius: 10px;
-  overflow: hidden; /* Ensures the border-radius is applied properly */
+  overflow: hidden;
+  width: 30%; 
+  margin: 1.5%; 
+  display: inline-block; 
+  box-sizing: border-box; 
 }
 
 .attendanceTable th, .attendanceTable td {
@@ -363,5 +367,11 @@ ul{
     margin-top: 5%;
     margin-bottom: 7%;
     margin-left: 23.5%;
+  }
+
+  .attendanceTable {
+    width: 100%; 
+    margin: 1.5% 0; 
+    display: block; 
   }
 }
