@@ -9,7 +9,7 @@ function QRCodeScanner(props){
     const location = useLocation();
     const { username, matric_num } = location.state;  // Recieves the username and matric number 
     const navigate = useNavigate();
-    const delay = 500;
+    const delay = 700;
     const previewStyle = {
       height: 240,
       width: 320,

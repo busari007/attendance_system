@@ -257,12 +257,12 @@ ul{
 .records_container{
   font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display: block;
-  margin-top: 2%;
-  margin-left: 12.7%;
+  margin-left: 9.7%;
   border: none;
   font-weight:600;
   font-size: x-large;
   padding: 5%;
+  
 }
 
 .attendanceTable {
@@ -270,10 +270,12 @@ ul{
   border-collapse: collapse;
   border-radius: 10px;
   overflow: hidden;
-  width: 30%; 
+  width: 40%; 
   margin: 1.5%; 
   display: inline-block; 
   box-sizing: border-box; 
+  vertical-align: top; 
+  margin-bottom: 10px;
 }
 
 .attendanceTable th, .attendanceTable td {
@@ -307,7 +309,7 @@ ul{
   }
 
   .records_container{
-    margin-left: 18%;
+    margin-left: 13%;
   }
 
   .sidebar{
@@ -370,8 +372,14 @@ ul{
   }
 
   .attendanceTable {
+    overflow: scroll;
     width: 100%; 
-    margin: 1.5% 0; 
+    margin: 2.5% 0; 
+    margin-left: -7%;
     display: block; 
+  }
+
+  .attendanceTable caption{
+    margin: 1%;
   }
 }

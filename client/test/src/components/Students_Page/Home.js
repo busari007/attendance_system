@@ -66,7 +66,7 @@ const uniqueCourses = Array.from(new Set(attendance.map(data => data.course_id))
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
-    <div style={{marginTop:'3.5%'}} className="records_container">
+    <div className="records_container">
     {uniqueCourses.map(courseId => {
       const courseData = attendance.filter(data => data.course_id === courseId);
 
