@@ -8,7 +8,7 @@ const uuid = require('uuid');
 const mysql = require('mysql');
 
 
-app.use(express.json());
+app.use(express.json()); 
 app.use(express.urlencoded({extended:false}));
 app.use(cors({
     origin: 'http://localhost:3000', 
@@ -149,23 +149,24 @@ app.get('/courses', (req, res) => {
   });
 });
 
-//query to get lecturers id
+//query to get lecturers id and course_codes offered by the lecturer
 app.post('/lectId', (req, res) => {
   const { lect_username } = req.body;
-  db.query('SELECT lect_id FROM lecturers WHERE lect_username = ?', [lect_username], (err, result) => {
+  db.query('SELECT l.lect_id, c.course_code FROM lecturers l LEFT JOIN courses c ON l.lect_id = c.lect_id WHERE l.lect_username = ?', [lect_username], (err, result) => {
     if (err) {
       console.error("Query Error", err);
       res.status(500).json({ success: false, message: 'Internal server error' });
     } else {
       if (result.length > 0) {
-       const lect_id = result[0];
-        res.json({ lect_id: lect_id.lect_id, success: true });
+        const { lect_id, course_code } = result[0];
+        res.json({ lect_id, course_code, success: true });
       } else {
         res.status(401).json({ success: false, message: 'Lect Id not found' });
       }
     }
   });
 });
+
 
 
 
@@ -254,6 +255,75 @@ app.post('/getAttendance', (req, res) => {
         res.json({ records: result, success: true });
       } else {
         res.status(401).json({ success: false, message: 'No attendance records found for the specified matric_num' });
+      }
+    }
+  });
+});
+
+
+app.post('/getLectCourses', (req, res) => {
+  const { lect_id } = req.body;
+  db.query('SELECT courses.course_name, course_code FROM courses JOIN lecturers ON courses.lect_id = lecturers.lect_id WHERE lecturers.lect_id = ?', [lect_id], (err, result) => {
+    if (err) {
+      console.error("Query Error", err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    } else {
+      if (result.length > 0) {
+        const courses = result.map(row => ({ course_name: row.course_name, course_code: row.course_code }));
+        res.json({ courses, success: true });
+      } else {
+        res.status(401).json({ success: false, message: 'Lecturers ID not found' });
+      }
+    }
+  });
+});
+
+
+app.post('/attendance', async (req, res) => {  // to take attendance
+  try {
+    const { matric_num, course_id, status } = req.body;
+
+    // Insert data into the Attendance table
+    await db.query(
+      'INSERT INTO attendance (matric_num, course_id, Status) VALUES (?, ?, "Present")',
+      [matric_num, course_id, status]
+    );
+
+    console.log('Attendance record inserted successfully.');
+    res.json({message:'Attendance record inserted successfully!'});
+  } catch (error) {
+    console.error('Error inserting attendance record:', error);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// To get attendance records
+app.post('/getStudentsAttendance', (req, res) => {
+  const { course_code } = req.body;
+
+  const query = `
+  SELECT c.course_name, 
+  c.course_code, 
+  c.course_id,
+  u.matric_num,
+  DATE_FORMAT(a.dateTaken, '%d-%m-%Y') AS dateTaken,
+  TIME_FORMAT(a.timeTaken, '%H:%i') AS timeTaken, 
+  a.status
+  FROM courses c
+  LEFT JOIN users u ON c.matric_num = u.matric_num
+  LEFT JOIN attendance a ON c.course_id = a.course_id
+  WHERE c.course_code = ? AND (u.matric_num IS NOT NULL OR c.lect_id IS NULL);  
+  `;
+
+  db.query(query, [course_code], (err, result) => {
+    if (err) {
+      console.error("Query Error", err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    } else {
+      if (result.length > 0) {
+        res.json({ records: result, success: true });
+      } else {
+        res.status(401).json({ success: false, message: 'No attendance records found for the specified course_code' });
       }
     }
   });

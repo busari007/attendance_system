@@ -63,6 +63,7 @@ function QRCodeScanner(props){
         }).then((res)=>{
           window.alert('Attendance successfully recorded');
           console.log(res);
+          navigate('/home', {state:{ username, matric_num }});
         }).catch((err)=>{
           console.log(err);
         })

@@ -9,10 +9,12 @@ import  Axios  from "axios";
 function LectHome(){
   const location = useLocation();
   const [lect_id, setLectId] = useState();
+  const [courseCode, setCourseCode] = useState();
   const { lect_username } = location.state;  //To pass username and matric num into components on different routes (React router v6)
   const navigate = useNavigate();  //To navigate through routes
  const [isOpen, setOpen] = useState(false); //To set slidebar to appear or disappear
  const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
+ const [attendance, setAttendance] = useState([]);
 
  function handleToggle(){
      setOpen(!isOpen);
@@ -27,18 +29,29 @@ function LectHome(){
 useEffect(() => {  //To handle the click event that closes the sidebar outside the sidebar
     Axios.post('https://vercel-backend-test-azure.vercel.app/lectId',{
         lect_username: lect_username
-    }).then(({ data: { lect_id } }) => {
+    }).then(({ data: { lect_id, course_code } }) => {
         setLectId(lect_id);
-        console.log(lect_id);
+        setCourseCode(course_code);
+        console.log(courseCode);
+        Axios.post('https://vercel-backend-test-azure.vercel.app/getStudentsAttendance',{
+          course_code: courseCode
+        }).then((res)=>{
+          setAttendance(res.data.records);
+          console.log(res.data.records);
+          console.log("Attendance data recieved");
+        }).catch((err)=>{
+          console.log(err);
+        });
       }).catch((err)=>{
-         console.log(err);
+        console.log(err);
     });
   document.addEventListener('mousedown', handleOutsideClick);   
 
   return () => {
     document.removeEventListener('mousedown', handleOutsideClick);
   };
-}, [lect_username]); 
+}, [lect_username, courseCode]); 
+
 
     return (
       <div>
@@ -62,6 +75,37 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
+    <div className="records_container">
+  {Array.from(new Set(attendance.map(data => data.course_code))).map(courseCode => {
+    const courseData = attendance.filter(data => data.course_code === courseCode);
+
+    return (
+      <table className={`attendanceTable ${attendance.length > 4 ? 'scrollable' : ''}`} key={courseCode}>
+        <caption>{courseData[0].course_name} - {courseCode}</caption>
+        <thead>
+          <tr>
+            <th>Students' Matric Number</th>
+            <th>Attendance date</th>
+            <th>Attendance time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {courseData.map((entry, entryIndex) => (
+            <tr key={entryIndex}>
+              <td>{entry.matric_num}</td>
+              <td>{entry.dateTaken}</td>
+              <td>{entry.timeTaken}</td>
+              <td>{entry.status}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  })}
+  {attendance.length === 0 && 'No attendance data yet'}
+</div>
+
     </div>
     );
   }

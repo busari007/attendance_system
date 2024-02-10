@@ -262,20 +262,23 @@ ul{
   font-weight:600;
   font-size: x-large;
   padding: 5%;
-  
 }
 
 .attendanceTable {
   border: 1px solid #02022f24;
   border-collapse: collapse;
   border-radius: 10px;
-  overflow: hidden;
   width: 40%; 
   margin: 1.5%; 
   display: inline-block; 
   box-sizing: border-box; 
   vertical-align: top; 
   margin-bottom: 10px;
+}
+
+.scrollable {  
+  max-height: 50vh; 
+  overflow-y: auto;
 }
 
 .attendanceTable th, .attendanceTable td {
@@ -381,5 +384,10 @@ ul{
 
   .attendanceTable caption{
     margin: 1%;
+  }
+
+  .scrollable {  
+    max-height: 350px; 
+    overflow-y: auto;
   }
 }
