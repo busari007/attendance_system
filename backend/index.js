@@ -158,8 +158,9 @@ app.post('/lectId', (req, res) => {
       res.status(500).json({ success: false, message: 'Internal server error' });
     } else {
       if (result.length > 0) {
-        const { lect_id, course_code } = result[0];
-        res.json({ lect_id, course_code, success: true });
+        const lect_id = result[0].lect_id;
+        const courseCodes = result.map(row => row.course_code); // Extract course codes from each row
+        res.json({ lect_id ,courseCodes, success: true });
       } else {
         res.status(401).json({ success: false, message: 'Lect Id not found' });
       }

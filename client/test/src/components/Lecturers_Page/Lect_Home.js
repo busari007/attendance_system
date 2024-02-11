@@ -9,7 +9,6 @@ import  Axios  from "axios";
 function LectHome(){
   const location = useLocation();
   const [lect_id, setLectId] = useState();
-  const [courseCode, setCourseCode] = useState();
   const { lect_username } = location.state;  //To pass username and matric num into components on different routes (React router v6)
   const navigate = useNavigate();  //To navigate through routes
  const [isOpen, setOpen] = useState(false); //To set slidebar to appear or disappear
@@ -26,31 +25,31 @@ function LectHome(){
   }
 };
 
-useEffect(() => {  //To handle the click event that closes the sidebar outside the sidebar
-    Axios.post('https://vercel-backend-test-azure.vercel.app/lectId',{
-        lect_username: lect_username
-    }).then(({ data: { lect_id, course_code } }) => {
-        setLectId(lect_id);
-        setCourseCode(course_code);
-        console.log(courseCode);
-        Axios.post('https://vercel-backend-test-azure.vercel.app/getStudentsAttendance',{
-          course_code: courseCode
-        }).then((res)=>{
+useEffect(() => {
+  Axios.post('https://vercel-backend-test-azure.vercel.app/lectId', {
+      lect_username: lect_username
+  }).then(({data: lect_id,course_code}) => {
+      setLectId(lect_id);
+      console.log(course_code); 
+      Axios.post('https://vercel-backend-test-azure.vercel.app/getStudentsAttendance', {
+          course_code: course_code 
+      }).then((res) => {
           setAttendance(res.data.records);
           console.log(res.data.records);
-          console.log("Attendance data recieved");
-        }).catch((err)=>{
+          console.log("Attendance data received");
+      }).catch((err) => {
           console.log(err);
-        });
-      }).catch((err)=>{
-        console.log(err);
-    });
-  document.addEventListener('mousedown', handleOutsideClick);   
+      });
+  }).catch((err) => {
+      console.log(err);
+  });
+  document.addEventListener('mousedown', handleOutsideClick);
 
   return () => {
-    document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('mousedown', handleOutsideClick);
   };
-}, [lect_username, courseCode]); 
+}, [lect_username]);
+
 
 
     return (
@@ -84,7 +83,7 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
         <caption>{courseData[0].course_name} - {courseCode}</caption>
         <thead>
           <tr>
-            <th>Students' Matric Number</th>
+            <th>Students' Matric Numbers</th>
             <th>Attendance date</th>
             <th>Attendance time</th>
             <th>Status</th>
