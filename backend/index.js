@@ -310,10 +310,10 @@ app.post('/getStudentsAttendance', (req, res) => {
   DATE_FORMAT(a.dateTaken, '%d-%m-%Y') AS dateTaken,
   TIME_FORMAT(a.timeTaken, '%H:%i') AS timeTaken, 
   a.status
-  FROM courses c
-  LEFT JOIN users u ON c.matric_num = u.matric_num
-  LEFT JOIN attendance a ON c.course_id = a.course_id
-  WHERE c.course_code = ? AND (u.matric_num IS NOT NULL OR c.lect_id IS NULL);  
+FROM courses c
+LEFT JOIN users u ON c.matric_num = u.matric_num
+LEFT JOIN attendance a ON c.course_id = a.course_id
+WHERE c.course_code IN (?) AND (u.matric_num IS NOT NULL OR c.lect_id IS NULL);
   `;
 
   db.query(query, [course_code], (err, result) => {

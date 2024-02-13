@@ -28,11 +28,11 @@ function LectHome(){
 useEffect(() => {
   Axios.post('https://vercel-backend-test-azure.vercel.app/lectId', {
       lect_username: lect_username
-  }).then(({data: lect_id,course_code}) => {
+  }).then(({data:{lect_id,courseCodes}}) => {
       setLectId(lect_id);
-      console.log(course_code); 
+      console.log(courseCodes); 
       Axios.post('https://vercel-backend-test-azure.vercel.app/getStudentsAttendance', {
-          course_code: course_code 
+          course_code: courseCodes
       }).then((res) => {
           setAttendance(res.data.records);
           console.log(res.data.records);
