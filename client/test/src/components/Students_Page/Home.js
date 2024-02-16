@@ -25,6 +25,7 @@ function Home (){
 };
 
 useEffect(() => {  //To handle the click event that closes the sidebar outside the sidebar
+  console.log(matric_num);
   Axios.post('https://vercel-backend-test-azure.vercel.app/getAttendance',{
     matric_num: matric_num
   }).then((res)=>{

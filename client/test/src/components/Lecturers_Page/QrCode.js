@@ -13,15 +13,18 @@ const QrCode = () => {
   const location = useLocation();
   const { lect_username, lect_id } = location.state;
   const [courses, setCourses] = useState([]);
+  const [courseCode, setCourseCode] = useState("");
   const [data, setData] = useState();
   const [qrCode, setQRCode] = useState('');
   const [isCodeGenerated, setIsCodeGenerated] = useState(false);
+  const [timerId, setTimerId] = useState(null);
 
   function handleChange(e) {
     let value = e.target.value;
     let [courseName, courseCode] = value.split(" ");
     setData({ course_name: courseName, course_code: courseCode });
     setIsCodeGenerated(false);
+    setCourseCode(courseCode);
   }
 
   function handleQRCode() {
@@ -33,6 +36,26 @@ const QrCode = () => {
     const qrCodeValue = `${data.course_code || ''}`;
     setQRCode(qrCodeValue);
     setIsCodeGenerated(!isCodeGenerated);
+    clearTimeout(timerId); // Clear existing timer
+    handleAbscence();
+  }
+
+  function handleAbscence() {
+    if (isCodeGenerated === false) {
+      const id = setTimeout(() => {
+        setIsCodeGenerated(false);
+        Axios.post('https://vercel-backend-test-azure.vercel.app/absent',{
+          course_code: courseCode
+        }).then((res)=>{
+          console.log(res);
+        }).catch((err)=>{
+          console.log(err);
+        });
+        alert("Attendance Window Closed");
+      }, 5000); // Timer set to 10 seconds
+  
+      setTimerId(id);
+    }
   }
 
   function handleToggle() {
@@ -46,6 +69,7 @@ const QrCode = () => {
   };
 
   useEffect(() => {
+    console.log(courseCode);
     Axios.post("https://vercel-backend-test-azure.vercel.app/getLectCourses", {
       lect_id: lect_id
     })
@@ -53,15 +77,15 @@ const QrCode = () => {
         const receivedCourses = response.data.courses;
         if (receivedCourses && receivedCourses.length > 0) {
           setCourses(receivedCourses);
+
         } else {
           setCourses([{ course_name: 'No Courses' }]);
         }
-        console.log(response);
       })
       .catch((error) => {
         console.error("Error fetching courses:", error);
       });
-  }, [lect_id]);
+  }, [lect_id, isCodeGenerated,courseCode]);
 
   useEffect(() => {
     if (courses.length > 0 && courses[0].course_name !== 'No Courses') {
@@ -113,7 +137,7 @@ const QrCode = () => {
         <QRCode className={`qrCode`} value={qrCode} />
       }
       <button
-        style={{marginTop:"-5%"}}
+        style={{ marginTop: "-5%" }}
         onClick={handleQRCode}
         className={`qrButton ${isCodeGenerated ? 'after' : 'before'}`}
       >
@@ -124,3 +148,7 @@ const QrCode = () => {
 }
 
 export default QrCode;
+
+
+
+//Now I want a query that uses said course codes and updates the attendance table in the database by adding a new record but adding "Absent" to Status

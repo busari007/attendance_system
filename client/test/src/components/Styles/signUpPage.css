@@ -3,16 +3,16 @@
     position: absolute;
     top: 0;
     left: 0;
-    margin: 3.6rem 15.7rem;
+    margin: 4.6rem 15.7rem;
     display: flex;
     width: 70%;
     border-radius:20px;
-    box-shadow: 10px 4px 18px rgba(16, 13, 13, 0.1);
+    box-shadow: 10px 4px 18px rgba(136, 132, 132, 0.1);
   }
   
   #background_logo{
     border: 2px solid rgb(53, 29, 147);
-    width: 50%;
+    width: 48%;
     max-height: 80%;
     object-fit: cover;
     border-top-left-radius: 20px;
@@ -35,11 +35,10 @@
   .form{
     float:inline-end;
     width: 41%;
-    float: right;
    text-align: left;
     padding: 3%;
-    margin: 2%;
-    margin-left: 6%;
+    margin: 3.5%;
+    margin-left: 4%;
   }
   
   .form label{
@@ -147,10 +146,17 @@
       font-size: 5vw; 
       margin: 1.5%;
     }
-  
+     #background_logo{
+      width: 49%;
+      max-height: 80%;
+      border-top-right-radius:0;
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+     }
+
     .form {
       font-size: 3vw;
-      width: 90%;
+      width: 60%;
       margin-left: 0;
       margin-bottom: 1%;
     }

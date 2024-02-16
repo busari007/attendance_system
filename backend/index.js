@@ -286,7 +286,7 @@ app.post('/attendance', async (req, res) => {  // to take attendance
 
     // Insert data into the Attendance table
     await db.query(
-      'INSERT INTO attendance (matric_num, course_id, Status) VALUES (?, ?, "Present")',
+      'INSERT INTO attendance (matric_num, course_id, Status) VALUES (?, ?, ?)',
       [matric_num, course_id, status]
     );
 
@@ -341,6 +341,22 @@ app.post('/getCourseId', (req, res) => {
       res.status(500).send('Error retrieving data from the database');
     } else {
       res.json(result);
+    }
+  });
+});
+
+app.post('/absent',(req,res)=>{
+  const {course_code} = req.body;
+  db.query(`INSERT INTO attendance (matric_num, course_id, Status, timeTaken, dateTaken, course_code) 
+            SELECT u.matric_num, c.course_id, 'Absent', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP(), ? 
+            FROM courses AS c JOIN users AS u ON c.matric_num = u.matric_num 
+            WHERE c.course_code = ?`
+  ,[course_code, course_code],(err,result)=>{
+    if (err) {
+      console.error('Error executing the SELECT query:', err);
+      res.status(500).send('Error retrieving data from the database');
+    } else {
+      res.json(result); 
     }
   });
 });
