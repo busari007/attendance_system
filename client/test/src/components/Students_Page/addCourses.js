@@ -19,7 +19,7 @@ const AddCourses = (props)=> {
 
  function handleSubmit(e){
     e.preventDefault();
-    Axios.post("https://vercel-backend-test-azure.vercel.app/courses",{
+    Axios.post(`https://vercel-backend-test-azure.vercel.app/courses`,{
       session:state.session,
       course_name:state.course_name,
       course_code:state.course_code,

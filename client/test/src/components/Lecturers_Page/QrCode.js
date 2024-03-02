@@ -44,7 +44,7 @@ const QrCode = () => {
     if (isCodeGenerated === false) {
       const id = setTimeout(() => {
         setIsCodeGenerated(false);
-        Axios.post('https://vercel-backend-test-azure.vercel.app/absent',{
+        Axios.post(`https://vercel-backend-test-azure.vercel.app/absent`,{
           course_code: courseCode
         }).then((res)=>{
           console.log(res);
@@ -52,7 +52,7 @@ const QrCode = () => {
           console.log(err);
         });
         alert("Attendance Window Closed");
-      }, 5000); // Timer set to 10 seconds
+      }, 30000); // Timer set to 10 seconds
   
       setTimerId(id);
     }
@@ -70,7 +70,7 @@ const QrCode = () => {
 
   useEffect(() => {
     console.log(courseCode);
-    Axios.post("https://vercel-backend-test-azure.vercel.app/getLectCourses", {
+    Axios.post(`https://vercel-backend-test-azure.vercel.app/getLectCourses`, {
       lect_id: lect_id
     })
       .then((response) => {
@@ -150,5 +150,3 @@ const QrCode = () => {
 export default QrCode;
 
 
-
-//Now I want a query that uses said course codes and updates the attendance table in the database by adding a new record but adding "Absent" to Status

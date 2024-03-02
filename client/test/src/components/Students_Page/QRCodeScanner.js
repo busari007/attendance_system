@@ -51,15 +51,16 @@ function QRCodeScanner(props){
       
 
     useEffect(() => {
-       Axios.post('https://vercel-backend-test-azure.vercel.app/getCourseId',{
+      console.log(result.data);
+       Axios.post(`https://vercel-backend-test-azure.vercel.app/getCourseId`,{
         course_code: result.data, 
        matric_num: matric_num
        }).then((res)=>{
         const { course_id } = res.data[0];
-        Axios.post('https://vercel-backend-test-azure.vercel.app/attendance',{
+        Axios.post(`https://vercel-backend-test-azure.vercel.app/attendance`,{
           matric_num: matric_num,
           course_id: course_id,
-          Status: 'Present'
+          Status: 1
         }).then((res)=>{
           window.alert('Attendance successfully recorded');
           console.log(res);

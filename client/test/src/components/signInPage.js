@@ -44,9 +44,10 @@ function SignIn(props) {
     setFormValid(validateMatricNum(state.matric_num) && validatePassword(state.password));
   }, [state.matric_num, state.password]);
 
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post('https://vercel-backend-test-azure.vercel.app/logIn', {
+    Axios.post(`https://vercel-backend-test-azure.vercel.app/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
       matric_num: state.matric_num,
       password: state.password
     }).then((response) => {
@@ -61,7 +62,7 @@ function SignIn(props) {
         console.log(response.status);
       }
     }).catch((err) => {
-      console.error(err.message);
+      alert(err);
       if (err.message === "Request failed with status code 401") {
         window.alert("Invalid Details");
       }

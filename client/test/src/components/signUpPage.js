@@ -81,7 +81,7 @@ function SignUp(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    Axios.post('https://vercel-backend-test-azure.vercel.app/register', {
+    Axios.post(`https://vercel-backend-test-azure.vercel.app/register`, {
       username: state.username,
       email: state.email,
       password: state.password,

@@ -12,6 +12,7 @@ import LectAddCourses from "./components/Lecturers_Page/Lect_AddCourses";
 import LectCourses from "./components/Lecturers_Page/Lect_Courses";
 import QRCodeScanner from "./components/Students_Page/QRCodeScanner";
 import { BrowserRouter,Routes, Route} from "react-router-dom";
+import Location from "./locationTest";
 import React from "react";
 
 class App extends React.Component{
@@ -48,6 +49,7 @@ class App extends React.Component{
        <BrowserRouter>
         <Routes>
             <Route path="/" element={<SignIn state={this.state}/>}/>
+            <Route path="/location" element={<Location/>}/>
             <Route path="/signUp" element={<SignUp state={this.state}/>}/>  
             <Route path="/home" element={<Home />}/>
             <Route path="/addCourses" element={<AddCourses/>}/>

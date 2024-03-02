@@ -6,23 +6,26 @@ const PORT = process.env.PORT || 5000;
 const members = require('./members');
 const uuid = require('uuid');
 const mysql = require('mysql');
+// const socketIo = require('socket.io');
+// const http = require('http');
 
+// const server = http.createServer(app);
+// const io = socketIo(server);
 
 app.use(express.json()); 
 app.use(express.urlencoded({extended:false}));
 app.use(cors({
-    origin: 'http://localhost:3000', 
+    origin: '*', //* allows requests from any device
      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true
 }));
-
 
 app.get('/',(req,res)=>{
     db.query('SELECT * FROM users', (err, result) => {
         if (err) {
           console.error('Error executing the SELECT query:', err); 
         }else{
-         console.log("Data retrieved and displayed @ http://localhost:5000/");
+         console.log(`Data retrieved and displayed @ http://localhost:${PORT}/`);
         res.json(result);
         }
         }
@@ -43,6 +46,21 @@ db.connect((err)=>{
         console.log("Successfully connected to database");
     }
 });
+
+
+// io.on('connection', (socket) => {
+//   console.log('A client connected');
+
+//   // Handle boundary dimension updates
+//   socket.on('updateBoundaryDimensions', (dimensions) => {
+//       // Broadcast the updated dimensions to all connected clients
+//       io.emit('boundaryDimensions', dimensions);
+//   });
+
+//   socket.on('disconnect', () => {
+//       console.log('A client disconnected');
+//   });
+// });
 
 
 //query to create student account
@@ -106,7 +124,7 @@ app.post('/lectLogIn',(req,res)=>{
   const { lect_username, lect_password } = req.body;
 
    // Query the database for user authentication
-   const query = 'SELECT * FROM lecturers WHERE lect_username = ? AND lect_password = ?';
+   const query = 'SELECT * FROM lecturers WHERE lect_username = ? AND l\ect_password = ?';
    db.query(query, [lect_username, lect_password], (err, results) => {  //matricnum and password act as array values that will replace ? in the sql query query variable
      if (err) {
        console.error('Database query error:', err);
@@ -309,7 +327,8 @@ app.post('/getStudentsAttendance', (req, res) => {
   u.matric_num,
   DATE_FORMAT(a.dateTaken, '%d-%m-%Y') AS dateTaken,
   TIME_FORMAT(a.timeTaken, '%H:%i') AS timeTaken, 
-  a.status
+  a.status,
+  a.attendanceID
 FROM courses c
 LEFT JOIN users u ON c.matric_num = u.matric_num
 LEFT JOIN attendance a ON c.course_id = a.course_id
@@ -361,7 +380,23 @@ app.post('/absent',(req,res)=>{
   });
 });
 
+// To update attendance status
+app.post('/updateAttendance', (req, res) => {
+  const { attendanceID, newStatus } = req.body;
 
-app.listen(5000, () => {
-  console.log('Server started on port 5000');
+  // Update the status in the database using the provided attendanceID
+  const sql = 'UPDATE attendance SET status = ? WHERE attendanceID = ?';
+  db.query(sql, [newStatus, attendanceID], (err, result) => {
+    if (err) {
+      console.error("Error updating status:", err);
+      res.status(500).send("Error updating status");
+    } else {
+      res.status(200).send("Status updated successfully");
+    }
+  });
+});
+
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
