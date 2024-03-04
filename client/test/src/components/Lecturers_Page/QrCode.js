@@ -69,7 +69,24 @@ const QrCode = () => {
   };
 
   useEffect(() => {
-    console.log(courseCode);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+          const { latitude, longitude } = position.coords;
+          //console.log("Latitude:", latitude, "Longitude:", longitude);
+           alert("Latitude:", latitude, "Longitude:", longitude);
+           Axios.post('https://vercel-backend-test-azure.vercel.app/updateLocation',{
+            latitude: latitude,
+            longitude: longitude,
+            lect_id: lect_id
+          }).then((res)=>{
+              alert("Location on table updated")
+          }).catch((err)=>{
+              alert("Location not updated")
+          });
+      });
+  } else {
+      console.log("Geolocation is not supported by this browser.");
+  }
     Axios.post(`https://vercel-backend-test-azure.vercel.app/getLectCourses`, {
       lect_id: lect_id
     })
