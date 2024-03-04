@@ -396,6 +396,56 @@ app.post('/updateAttendance', (req, res) => {
   });
 });
 
+//To validate password change
+app.post('/passwordChange', (req, res) => {
+  const { matric_num, password } = req.body; // Corrected variable name
+
+  // Query the database for user authentication
+  const query = `
+  (SELECT 'user' as type, matric_num, password, username FROM users WHERE matric_num = ? AND password = ?)
+   UNION 
+  (SELECT 'lecturer' as type, lect_id as matric_num, lect_password, lect_username FROM lecturers WHERE lect_username = ? AND lect_password = ?)
+  `;
+  
+  db.query(query, [matric_num, password, matric_num, password], (err, results) => { // Fixed parameter order
+    if (err) {
+      console.error('Database query error:', err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    } else {
+      // Check if a user with matching credentials was found
+      if (results.length > 0) {
+        const user = results[0];
+        res.json({ type: user.type, id: user.matric_num, password: user.password, username: user.username, success: true }); // Corrected response data
+      } else {
+        res.status(401).json({ success: false, message: 'Invalid matric_num or password' });
+      }
+    }
+  });
+});
+
+app.post('/changedPassword', (req, res) => {
+  const { data, password } = req.body;
+
+  // Determine if the data is a matric_num or an id
+  const isMatricNum = /^[0-9]{2}\/[0-9]{4}$/.test(data);
+  const table = isMatricNum ? 'users' : 'lecturers';
+  const column = isMatricNum ? 'matric_num' : 'lect_id';
+  const newPassword = isMatricNum ? 'password' : 'lect_password';
+
+  // Update the password in the respective table based on the received data
+  const sql = `UPDATE ${table} SET ${newPassword} = ? WHERE ${column} = ?`;
+
+  db.query(sql, [password, data], (err, result) => {
+    if (err) {
+      console.error("Error updating password:", err);
+      res.status(500).send("Error updating password");
+    } else {
+      res.status(200).send("Password updated successfully");
+    }
+  });
+});
+
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

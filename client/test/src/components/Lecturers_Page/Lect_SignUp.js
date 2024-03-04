@@ -3,6 +3,7 @@ import logo from "../Pictures/babcock-logo.gif";
 import React, { useEffect, useState } from "react";
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { FaCheck } from 'react-icons/fa';
 
 function LectSignUp(props) {
   const navigate = useNavigate();
@@ -105,7 +106,7 @@ function LectSignUp(props) {
           <label htmlFor="password">Password</label>
           <label className="errors">{passwordError}</label>
           <input type="password" id="password" onChange={(e) => handleInputChange(e, 'lect_password')} />
-          {formValid ? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
+          {formValid ? (<label className="submitting_confirmed"><FaCheck className='form_validated'/></label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <button className="submit" disabled={!formValid}>Register</button>
           <p id="signIn_link">Already have an account? Sign in <a className="links" href="/lectSignIn">here</a></p>
         </form>

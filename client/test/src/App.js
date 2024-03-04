@@ -13,6 +13,8 @@ import LectCourses from "./components/Lecturers_Page/Lect_Courses";
 import QRCodeScanner from "./components/Students_Page/QRCodeScanner";
 import { BrowserRouter,Routes, Route} from "react-router-dom";
 import Location from "./locationTest";
+import ChangePassword from "./changePassword";
+import PasswordChanged from "./passwordChanged";
 import React from "react";
 
 class App extends React.Component{
@@ -61,6 +63,8 @@ class App extends React.Component{
             <Route path="/lectAddCourses" element={<LectAddCourses />}/>
             <Route path="/lectCourses" element={<LectCourses />}/>
             <Route path="/qrCodeScanner" element={<QRCodeScanner />}/>
+            <Route path="/changePassword" element={<ChangePassword />}/>
+            <Route path="/passwordChanged" element={<PasswordChanged />}/>
        </Routes>    
        </BrowserRouter>
     </div>

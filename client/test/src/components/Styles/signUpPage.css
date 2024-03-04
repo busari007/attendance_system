@@ -99,6 +99,15 @@
      color: red;
   }
 
+.form_validated{
+  position:absolute;
+  bottom:0;
+  right:0;
+  margin:7.7%;
+  margin-right: 13.2%;
+  font-size: 27px;
+}
+
   @media (max-width: 1440px) {
     .container {
       flex-direction:row;

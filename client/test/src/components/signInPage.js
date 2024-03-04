@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import logo from "./Pictures/babcock-logo.gif";
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
+import { FaCheck } from 'react-icons/fa';
 
 function SignIn(props) {
     const navigate = useNavigate();
@@ -47,7 +48,7 @@ function SignIn(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post(`https://vercel-backend-test-azure.vercel.app/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
+    Axios.post(`http://localhost:5000/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
       matric_num: state.matric_num,
       password: state.password
     }).then((response) => {
@@ -81,10 +82,11 @@ function SignIn(props) {
           <label htmlFor="password">Password</label>
           <label className="errors">{passwordError}</label>
           <input type="password" id="password" onChange={handlePasswordChange} />
-          {formValid ? (<label className="submitting_confirmed">Good to go!!!</label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
+          {formValid ? (<label className="submitting_confirmed"><FaCheck className='form_validated'/></label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <button className="submit" disabled={!formValid}>{"Log In"}</button>
           <p id="signIn_link">Don't have an account? Sign up <a className="links" href="/signUp">here</a></p>
         </form>
+        <a className="links" href="/changePassword" style={{position:"absolute",bottom:10,right:10,textDecoration:"none"}}>Change Password</a>
      </div>
      <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/lectSignIn">lecturer?</a></p>
     </div>
