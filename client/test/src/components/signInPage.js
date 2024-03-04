@@ -48,7 +48,7 @@ function SignIn(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post(`http://localhost:5000/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
+    Axios.post(`https://vercel-backend-test-azure.vercel.app/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
       matric_num: state.matric_num,
       password: state.password
     }).then((response) => {

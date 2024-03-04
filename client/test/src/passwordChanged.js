@@ -33,7 +33,7 @@ function PasswordChanged() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission behavior
-    Axios.post('http://localhost:5000/changedPassword',{
+    Axios.post('https://vercel-backend-test-azure.vercel.app/changedPassword',{
       data:data,
       password:password
     }).then((res)=>{
