@@ -164,6 +164,7 @@ function LectHome() {
                     <td>{entry.dateTaken}</td>
                     <td>{entry.timeTaken}</td>
                     <td
+                      className="status"
                       contentEditable
                       suppressContentEditableWarning
                       onBlur={(event) => handleEdit(event.target.innerText, entryIndex, 3,entry.attendanceID)}

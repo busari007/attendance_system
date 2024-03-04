@@ -283,7 +283,6 @@ ul{
 
 .attendanceTable th, .attendanceTable td {
   border: 1px solid #02022f24;
-  padding: 8px;
   text-align: left;
 }
 
@@ -293,6 +292,28 @@ ul{
 
 .attendanceTable tbody tr:nth-child(even) {
   background-color: #d3d3d3; /* Background color for even rows */
+}
+
+.status{
+  padding: 4.5%;
+}
+
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+::-webkit-scrollbar-thumb {
+  background: rgb(214, 214, 218); 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(102, 102, 102, 0.4); 
 }
 
 @media (max-width: 720px) {
