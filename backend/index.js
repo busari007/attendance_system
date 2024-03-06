@@ -186,9 +186,6 @@ app.post('/lectId', (req, res) => {
   });
 });
 
-
-
-
 //query for displaying the courses
 app.post('/getCourses', (req, res) => {
   const { matric_num } = req.body;
@@ -223,7 +220,6 @@ app.post('/getLectCourses', (req, res) => {
     }
   });
 });
-
 
 app.post('/attendance', async (req, res) => {  // to take attendance
   try {
@@ -279,7 +275,6 @@ app.post('/getAttendance', (req, res) => {
   });
 });
 
-
 app.post('/getLectCourses', (req, res) => {
   const { lect_id } = req.body;
   db.query('SELECT courses.course_name, course_code FROM courses JOIN lecturers ON courses.lect_id = lecturers.lect_id WHERE lecturers.lect_id = ?', [lect_id], (err, result) => {
@@ -296,7 +291,6 @@ app.post('/getLectCourses', (req, res) => {
     }
   });
 });
-
 
 app.post('/attendance', async (req, res) => {  // to take attendance
   try {
@@ -348,7 +342,6 @@ WHERE c.course_code IN (?) AND (u.matric_num IS NOT NULL OR c.lect_id IS NULL);
     }
   });
 });
-
 
 //To get the course_id for recording attendance
 app.post('/getCourseId', (req, res) => {
@@ -445,7 +438,35 @@ app.post('/changedPassword', (req, res) => {
   });
 });
 
+//To set lecturers location
+app.post('/updateLocation', (req, res) => {
+  const { latitude, longitude, lect_id } = req.body;
 
+  // Update the password in the respective table based on the received data
+  const sql = `UPDATE lecturers SET latitude = ?, longitude = ? WHERE lect_id = ?`;
+
+  db.query(sql, [latitude, longitude, lect_id], (err, result) => {
+    if (err) {
+      console.error("Error updating location:", err);
+      res.status(500).send("Error updating location");
+    } else {
+      res.status(200).send("Location updated successfully");
+    }
+  });
+});
+
+//To get lecturers location
+app.post('/getLocation', (req, res) => { 
+  const { lect_id } = req.body;
+  db.query('SELECT latitude,longitude FROM lecturers where lect_id = ?', (err, result) => {
+    if (err) {
+      console.error('Error executing the SELECT query:', err);
+      res.status(500).send('Error retrieving data from the database');
+    } else {
+      res.json(result);
+    }
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);

@@ -26,15 +26,41 @@ function QRCodeScanner(props){
         setIsCodeGenerated(!isCodeGenerated);
     }
 
-    const handleScan = (res) => {
-        if (res) {
-          setResult(res);
-          console.log(res.data);
+    const handleScan = (dataString) => {
+      try {
+        // Manually parse the JSON-like string
+        const data = JSON.parse(dataString.replace(/(['"])?([a-zA-Z0-9_]+)(['"])?:/g, '"$2": '));
+        
+        // Now you can access the properties
+        if (data && data.lect_id !== undefined) {
+            console.log("lect_id:", data.lect_id);
+            // Assigning lect_id to a variable
+            const lectIdVariable = data.lect_id;
+            console.log("lectIdVariable:", lectIdVariable);
+        } else {
+            console.error("lect_id is undefined in the scanned data or the data is invalid");
         }
+    } catch (error) {
+        console.error('Error processing scanned data:', error);
+    }
+        // if (res) {
+        // //   // setResult(res);
+        // console.log(res.data);
+        // const { lect_id } = res.data;
+        // console.log(lect_id);
+        //   // try {
+        //   //   const qrData = JSON.parse(res);
+        //   //   alert(res);
+        //   //   const { lect_id } = qrData; // Extract lect_id from the parsed data
+        //   //   alert('Scanned lect_id:', lect_id);
+        //   // } catch (error) {
+        //   //   console.error('Error parsing QR code data:', error);
+        //   // }
+        // }
       };
     
       const handleError = (error) => {
-        console.log(error);
+        alert(error);
       };
     
 
@@ -88,7 +114,7 @@ function QRCodeScanner(props){
     <p className="welcome_text">Welcome, {username || "Guest"}</p>
     <FaBell className="icons"/>
     </nav> 
-    <div className={`sidebar ${isOpen ? 'open' : 'close'}`} ref={sidebarRef}>
+    <div className={`sidebar ${isOpen ? 'open' : 'close'}`} ref={sidebarRef}> 
       <div id="sidebarHeader">
       <FaArrowLeft style={{color:'rgb(65,65,65)'}} onClick={handleToggle} className="icons"/>
        <h2>UAS</h2>

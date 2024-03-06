@@ -32,30 +32,37 @@ const QrCode = () => {
       window.alert("Please register a valid course");
       return;
     }
-
-    const qrCodeValue = `${data.course_code || ''}`;
+  
+    const qrData = {
+      lect_id: lect_id, // Include lect_id
+      course_name: data.course_name,
+      course_code: data.course_code
+    };
+  
+    const qrCodeValue = JSON.stringify(qrData); // Convert to JSON string
     setQRCode(qrCodeValue);
     setIsCodeGenerated(!isCodeGenerated);
     clearTimeout(timerId); // Clear existing timer
     handleAbscence();
   }
+  
 
   function handleAbscence() {
-    if (isCodeGenerated === false) {
-      const id = setTimeout(() => {
-        setIsCodeGenerated(false);
-        Axios.post(`https://vercel-backend-test-azure.vercel.app/absent`,{
-          course_code: courseCode
-        }).then((res)=>{
-          console.log(res);
-        }).catch((err)=>{
-          console.log(err);
-        });
-        alert("Attendance Window Closed");
-      }, 30000); // Timer set to 10 seconds
+    // if (isCodeGenerated === false) {
+    //   const id = setTimeout(() => {
+    //     setIsCodeGenerated(false);
+    //     Axios.post(`https://vercel-backend-test-azure.vercel.app/absent`,{
+    //       course_code: courseCode
+    //     }).then((res)=>{
+    //       console.log(res);
+    //     }).catch((err)=>{
+    //       console.log(err);
+    //     });
+    //     alert("Attendance Window Closed");
+    //   }, 30000); // Timer set to 10 seconds
   
-      setTimerId(id);
-    }
+    //    setTimerId(id);
+    // }
   }
 
   function handleToggle() {
@@ -67,26 +74,27 @@ const QrCode = () => {
       setOpen(false);
     }
   };
+useEffect(()=>{
+  if ("geolocation" in navigator) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        const { latitude, longitude } = position.coords;
+         console.log("Latitude:", latitude, "Longitude:", longitude);
+         Axios.post('https://vercel-backend-test-azure.vercel.app/updateLocation',{
+          latitude: latitude,
+          longitude: longitude,
+          lect_id: lect_id
+        }).then((res)=>{
+            alert("Location on table updated")
+        }).catch((err)=>{
+            alert("Location not updated")
+        });
+    });
+} else {
+    console.log("Geolocation is not supported by this browser.");
+}
+},[]);
 
   useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-          const { latitude, longitude } = position.coords;
-          //console.log("Latitude:", latitude, "Longitude:", longitude);
-           alert("Latitude:", latitude, "Longitude:", longitude);
-           Axios.post('https://vercel-backend-test-azure.vercel.app/updateLocation',{
-            latitude: latitude,
-            longitude: longitude,
-            lect_id: lect_id
-          }).then((res)=>{
-              alert("Location on table updated")
-          }).catch((err)=>{
-              alert("Location not updated")
-          });
-      });
-  } else {
-      console.log("Geolocation is not supported by this browser.");
-  }
     Axios.post(`https://vercel-backend-test-azure.vercel.app/getLectCourses`, {
       lect_id: lect_id
     })

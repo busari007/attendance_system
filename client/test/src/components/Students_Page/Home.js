@@ -86,7 +86,7 @@ const uniqueCourses = Array.from(new Set(attendance.map(data => data.course_id))
               <tr key={entryIndex}>
                 <td>{entry.dateTaken}</td>
                 <td>{entry.timeTaken}</td>
-                <td>{entry.Status}</td>
+                <td className="status">{entry.Status}</td>
               </tr>
             ))}
           </tbody>
