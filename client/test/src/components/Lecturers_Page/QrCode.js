@@ -13,56 +13,62 @@ const QrCode = () => {
   const location = useLocation();
   const { lect_username, lect_id } = location.state;
   const [courses, setCourses] = useState([]);
-  const [courseCode, setCourseCode] = useState("");
-  const [data, setData] = useState();
+  const [courseCode, setCourseCode] = useState([]);
+  const [data, setData] = useState([]);
   const [qrCode, setQRCode] = useState('');
   const [isCodeGenerated, setIsCodeGenerated] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [attendanceWindow, setAttendanceWindow] = useState(30);
   const [timerId, setTimerId] = useState(null);
 
   function handleChange(e) {
     let value = e.target.value;
     let [courseName, courseCode] = value.split(" ");
-    setData({ course_name: courseName, course_code: courseCode });
+    setData([courseName, courseCode]); 
     setIsCodeGenerated(false);
     setCourseCode(courseCode);
-  }
+  }  
 
   function handleQRCode() {
-    if (!data || !data.course_name || !data.course_code) {
+    if (data.length === 0) {
       window.alert("Please register a valid course");
       return;
     }
-  
     const qrData = {
-      lect_id: lect_id, // Include lect_id
-      course_name: data.course_name,
-      course_code: data.course_code
+      lect_id: lect_id,
+      course_name: data[0] || data.course_name,
+      course_code: data[1] || data.course_code
     };
-  
-    const qrCodeValue = JSON.stringify(qrData); // Convert to JSON string
+
+    const qrCodeValue = JSON.stringify(qrData);
     setQRCode(qrCodeValue);
     setIsCodeGenerated(!isCodeGenerated);
-    clearTimeout(timerId); // Clear existing timer
     handleAbscence();
-  }
-  
+  }  
 
   function handleAbscence() {
-    // if (isCodeGenerated === false) {
-    //   const id = setTimeout(() => {
-    //     setIsCodeGenerated(false);
-    //     Axios.post(`https://vercel-backend-test-azure.vercel.app/absent`,{
-    //       course_code: courseCode
-    //     }).then((res)=>{
-    //       console.log(res);
-    //     }).catch((err)=>{
-    //       console.log(err);
-    //     });
-    //     alert("Attendance Window Closed");
-    //   }, 30000); // Timer set to 10 seconds
+    if (isCodeGenerated === false) {
+      alert(`Attendance Window set to ${attendanceWindow} seconds`);
+      const id = setTimeout(() => {
+        setIsCodeGenerated(false);
+        console.log(courseCode);
+        // Axios.post(`http://${window.location.hostname}:5000/absent`,{
+        //   course_code: courseCode
+        // }).then((res)=>{
+        //   console.log(res);
+        // }).catch((err)=>{
+        //   console.log(err);
+        //   console.log(err.response.data.error)
+        //   if(err.response.data.error === "No present records found within the past 5 minutes"){
+        //     alert("No student has been marked present within the past 5 minutes");
+        //   }
+        // });
+        alert("Attendance Window Closed");
+      }, 30000); // Timer set to 30 seconds
   
-    //    setTimerId(id);
-    // }
+       setTimerId(id);
+    }
   }
 
   function handleToggle() {
@@ -74,42 +80,65 @@ const QrCode = () => {
       setOpen(false);
     }
   };
-useEffect(()=>{
-  if ("geolocation" in navigator) {
-    navigator.geolocation.getCurrentPosition(function(position) {
+
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(function(position) {
         const { latitude, longitude } = position.coords;
-         console.log("Latitude:", latitude, "Longitude:", longitude);
-         Axios.post('https://vercel-backend-test-azure.vercel.app/updateLocation',{
+        //console.log("Latitude:", latitude, "Longitude:", longitude);
+        Axios.post(`http://${window.location.hostname}:5000/updateLocation`,{
           latitude: latitude,
           longitude: longitude,
           lect_id: lect_id
         }).then((res)=>{
-            alert("Location on table updated")
+          //alert("Location on table updated")
         }).catch((err)=>{
-            alert("Location not updated")
+          //alert("Location not updated")
         });
-    });
-} else {
-    console.log("Geolocation is not supported by this browser.");
-}
-},[]);
+      });
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
+  },[]);
 
   useEffect(() => {
-    Axios.post(`https://vercel-backend-test-azure.vercel.app/getLectCourses`, {
+    Axios.post(`http://${window.location.hostname}:5000/getLectCourses`, {
       lect_id: lect_id
     })
-      .then((response) => {
-        const receivedCourses = response.data.courses;
-        if (receivedCourses && receivedCourses.length > 0) {
-          setCourses(receivedCourses);
-
-        } else {
-          setCourses([{ course_name: 'No Courses' }]);
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching courses:", error);
-      });
+    .then((response) => {
+      console.log(lect_id);
+      const initialSelection = [...response.data.courses] ;
+      if(courses.length === 0){
+        setData([initialSelection[0].course_name, initialSelection[0].course_code]);
+        setCourseCode([initialSelection[0].course_code]);
+      } else {
+        return;
+      }
+      const receivedCourses = response.data.courses;
+      if (receivedCourses && receivedCourses.length > 0) {
+        setCourses(receivedCourses); 
+       console.log(courseCode);
+      } else {
+        setCourses([{ course_name: 'No Courses' }]);
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      if(error.message === "Request failed with status code 500"){
+        alert("Server's Offline");
+      setError({message:"Backend Error. Please Refresh"});
+      }else if(error.message === "Request failed with status code 401"){
+        alert("No Courses found")
+        setError({message:"You havent registered any courses. Please register"});
+        setLoading(false);
+      }else if(error.message === "Network Error"){
+        alert("Server's Offline");
+        setError({message:"Backend Error. Please Refresh"});
+      }
+    })
+    .finally(() => {
+      setLoading(false);
+    });
   }, [lect_id, isCodeGenerated,courseCode]);
 
   useEffect(() => {
@@ -125,6 +154,10 @@ useEffect(()=>{
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [courses]);
+
+  if (loading) {
+    return <div><p style={{marginTop:"19%",fontSize:"40px",fontWeight:'bolder', textAlign:"center"}}>Loading...</p></div>;
+  }
 
   return (
     <div>
@@ -157,21 +190,20 @@ useEffect(()=>{
             </option>
           ))}
         </select>
+        {error && <div style={{color: "red"}}>{error.message}</div>}
       </div>
       {isCodeGenerated &&
         <QRCode className={`qrCode`} value={qrCode} />
       }
-      <button
+      {!error && <button
         style={{ marginTop: "-5%" }}
         onClick={handleQRCode}
         className={`qrButton ${isCodeGenerated ? 'after' : 'before'}`}
       >
-        {isCodeGenerated ? 'X' : 'Generate'}
-      </button>
+        {isCodeGenerated ? 'X': 'Generate'}
+      </button>}
     </div>
   );
 }
 
 export default QrCode;
-
-

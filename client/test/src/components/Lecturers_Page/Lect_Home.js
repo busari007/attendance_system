@@ -13,6 +13,8 @@ function LectHome() {
   const [isOpen, setOpen] = useState(false);
   const sidebarRef = useRef(null);
   const [attendance, setAttendance] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   function handleToggle() {
     setOpen(!isOpen);
@@ -25,26 +27,35 @@ function LectHome() {
   };
 
   useEffect(() => {
-    Axios.post(`https://vercel-backend-test-azure.vercel.app/lectId`, {  //https://vercel-backend-test-azure.vercel.app
+    Axios.post(`http://${window.location.hostname}:5000/lectId`, {  //http://${window.location.hostname}:5000 for local server
       lect_username: lect_username,
     })
       .then(({ data: { lect_id, courseCodes } }) => {
         setLectId(lect_id);
+        console.log(courseCodes);
+        if(courseCodes[0] !== null){
         Axios.post(
-          `https://vercel-backend-test-azure.vercel.app/getStudentsAttendance`,
+          `http://${window.location.hostname}:5000/getStudentsAttendance`,
           {
             course_code: courseCodes,
           }
         )
           .then((res) => {
             setAttendance(res.data.records);
+            setLoading(false);
           })
           .catch((err) => {
-            console.log(err);
-          });
+            console.error("Error fetching records:", error);
+          });}else{
+            setLoading(false);
+            alert("No attendance data found")
+          }
       })
       .catch((err) => {
         console.log(err);
+        if(err.response.data.message === "Lect Id not found"){
+          alert("The lecturer doesnt exist");
+        }
       });
     document.addEventListener("mousedown", handleOutsideClick);
     
@@ -60,7 +71,7 @@ function LectHome() {
     updatedAttendance[rowIndex][columnIndex] = newValue;
     setAttendance(updatedAttendance);
     console.log("The data cells attendanceID is " + attendanceID);
-    Axios.post("https://vercel-backend-test-azure.vercel.app/updateAttendance", {
+    Axios.post(`http://${window.location.hostname}:5000/updateAttendance`, {
       attendanceID: attendanceID,
       newStatus: newValue
     })
@@ -71,6 +82,10 @@ function LectHome() {
       console.error("Error updating status:", error);
     });
   };
+
+  if (loading) {
+    return <div><p style={{marginTop:"19%",fontSize:"40px",fontWeight:'bolder', textAlign:"center"}}>Loading...</p></div>;
+  }
 
   return (
     <div>
@@ -177,7 +192,7 @@ function LectHome() {
             </table>
           );
         })}
-        {attendance.length === 0 && "No attendance data yet"}
+        <p>{attendance.length === 0 && 'No attendance data yet'}</p>
       </div>
     </div>
   );

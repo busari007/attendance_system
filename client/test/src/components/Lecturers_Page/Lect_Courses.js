@@ -11,6 +11,8 @@ function LectCourses(props){
     const [courses, setCourses] = useState([]);
     const [isOpen, setOpen] = useState(false);
     const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     
     function handleToggle(){
         setOpen(!isOpen);
@@ -25,16 +27,29 @@ function LectCourses(props){
       
 
     useEffect(() => {
-        Axios.post(`https://vercel-backend-test-azure.vercel.app/getLectCourses`,{
+        Axios.post(`http://${window.location.hostname}:5000/getLectCourses`,{
           lect_id: lect_id  //uses the matric number to filter the courses table to send only courses with the matric numbers value(its a foreign key in the db)
         })
         .then((response) => {
           // Set the courses state with the fetched data
           setCourses(response.data.courses);
           console.log(response);
+          setLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching courses:", error);
+          console.error("Error fetching courses:", error);  
+          console.log(error.response.data.message);
+          if(error.message === "Request failed with status code 500"){
+            alert("Server's Offline");
+            setError({message:"Backend Error. Please Refresh"});
+            }else if(error.message === "Request failed with status code 401"){
+              alert("No courses have been registered");
+              setError({message:"You havent registered any courses. Please Register"});
+              setLoading(false);
+            }else if(error.message === "Network Error"){
+              alert("Server's Offline");
+              setError({message:"Backend Error. Please Refresh"});
+            }
         });
 
         document.addEventListener('mousedown', handleOutsideClick);
@@ -43,6 +58,10 @@ function LectCourses(props){
           document.removeEventListener('mousedown', handleOutsideClick);
         };
       }, [lect_id]);
+
+      if (loading) {
+        return <div><p style={{marginTop:"19%",fontSize:"40px",fontWeight:'bolder', textAlign:"center"}}>Loading...</p></div>;
+      }
 
    return(
     <div>
@@ -67,7 +86,7 @@ function LectCourses(props){
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
 
-    <div className="course_container" style={{ marginTop:'2%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
+    {error ? <h2 style={{color: "rgb(255, 35, 35)", textAlign:"center"}}>{error.message}</h2> : <div className="course_container" style={{ marginTop:'2%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
     <ul>
         {courses.map((course) => (  //displays the courses fetched
           <li key={lect_id} style={{margin:'2%'}}>
@@ -75,7 +94,7 @@ function LectCourses(props){
           </li>
         ))}
       </ul>
-      </div>
+      </div> }
     </div>
    );
 }

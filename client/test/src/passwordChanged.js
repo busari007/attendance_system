@@ -33,7 +33,7 @@ function PasswordChanged() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission behavior
-    Axios.post('https://vercel-backend-test-azure.vercel.app/changedPassword',{
+    Axios.post(`http://${window.location.hostname}:5000/changedPassword`,{
       data:data,
       password:password
     }).then((res)=>{
@@ -53,7 +53,7 @@ function PasswordChanged() {
           <label>Enter your new password</label>
           <label className="errors">{passwordError}</label>
           <input id="currentPassword" type="password" onChange={handlePasswordChange} value={password} />
-          {formValid ? (<label className="submitting_confirmed"><FaCheck className='form_validated'/></label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
+          {formValid ? "": (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <input type='submit' className='submit' disabled={!formValid} style={{ width: "40%", marginLeft: "33.5%" }} />
         </form>
       </div>

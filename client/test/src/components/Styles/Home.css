@@ -316,6 +316,12 @@ ul{
   background: rgba(102, 102, 102, 0.4); 
 }
 
+.loading{
+  font-size: 500px;
+  text-align: center;
+  margin: 50vh;
+}
+
 @media (max-width: 720px) {
   .welcome_text{
    font-size: 3vw;
@@ -354,9 +360,7 @@ ul{
   }
   
   .qrButton.after {
-    margin-top: 22%;
     background-color: red;
-    margin-right: 2%;
   }
   .course_container{
     margin-top: 2.5%;

@@ -48,7 +48,7 @@ function SignIn(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post(`https://vercel-backend-test-azure.vercel.app/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
+    Axios.post(`http://${window.location.hostname}:5000/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
       matric_num: state.matric_num,
       password: state.password
     }).then((response) => {
@@ -63,9 +63,11 @@ function SignIn(props) {
         console.log(response.status);
       }
     }).catch((err) => {
-      alert(err);
+      console.log(err);
       if (err.message === "Request failed with status code 401") {
         window.alert("Invalid Details");
+      }else if(err.message === "Network Error"){
+        window.alert("Server's Offline");
       }
     });
   };
@@ -82,7 +84,7 @@ function SignIn(props) {
           <label htmlFor="password">Password</label>
           <label className="errors">{passwordError}</label>
           <input type="password" id="password" onChange={handlePasswordChange} />
-          {formValid ? (<label className="submitting_confirmed"><FaCheck className='form_validated'/></label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
+          {formValid ? "": (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <button className="submit" disabled={!formValid}>{"Log In"}</button>
           <p id="signIn_link">Don't have an account? Sign up <a className="links" href="/signUp">here</a></p>
         </form>

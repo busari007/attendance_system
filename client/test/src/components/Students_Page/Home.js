@@ -13,6 +13,8 @@ function Home (){
  const [isOpen, setOpen] = useState(false); //To set slidebar to appear or disappear
  const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
  const [attendance, setAttendance] = useState([]);
+ const [error, setError] = useState(null);
+ const [loading, setLoading] = useState(true);
 
  function handleToggle(){
      setOpen(!isOpen);
@@ -26,16 +28,31 @@ function Home (){
 
 useEffect(() => {  //To handle the click event that closes the sidebar outside the sidebar
   console.log(matric_num);
-  Axios.post(`https://vercel-backend-test-azure.vercel.app/getAttendance`,{
+  Axios.post(`http://${window.location.hostname}:5000/getAttendance`,{
     matric_num: matric_num
   }).then((res)=>{
       setAttendance(res.data.records);
       console.log(res.data.records);
       console.log("Attendance data recieved");
-  }).catch((err)=>{
-    window.alert('Error recieving courses');
-    console.log(err);
-  });
+  }).catch((error)=>{
+    console.log(error);
+    if(error.message === "Request failed with status code 500"){
+      alert("Server's Offline");
+      setError({message:"Backend Error. Please Refresh"});
+      }else if(error.message === "Network Error"){
+        alert("Server's Offline");
+        setError({message:"Backend Error. Please Restart"});
+      }else if(error.response.data.message === "No attendance records found for the specified matric_num"){
+        alert("No attendance records found");
+        setError(false);
+      }else if(error.response.data.message === "No registered courses"){
+        alert("No registered courses");
+        setError(false);
+      }
+  })
+  .finally(() => {
+    setLoading(false);
+  });;
   document.addEventListener('mousedown', handleOutsideClick);   
 
   return () => {
@@ -44,6 +61,10 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
 }, [matric_num]);
 
 const uniqueCourses = Array.from(new Set(attendance.map(data => data.course_id))); //This extracts unique course IDs from the attendance data. The Set object is used to eliminate duplicate course IDs, and then Array.from is used to convert the set back into an array.
+
+if (loading) {
+  return <div><p style={{marginTop:"19%",fontSize:"40px",fontWeight:'bolder', textAlign:"center"}}>Loading...</p></div>;
+}
 
     return (
       <div>
@@ -93,7 +114,7 @@ const uniqueCourses = Array.from(new Set(attendance.map(data => data.course_id))
         </table>
       );
     })}
-  {attendance.length === 0 && 'No attendance data yet'}
+  {error? <div style={{color: "red"}}>{error.message}</div>: <p>{attendance.length === 0 && 'No attendance data yet'}</p>}
 </div>
 
     </div>

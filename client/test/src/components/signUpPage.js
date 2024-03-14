@@ -82,7 +82,7 @@ function SignUp(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    Axios.post(`https://vercel-backend-test-azure.vercel.app/register`, {
+    Axios.post(`http://${window.location.hostname}:5000/register`, {
       username: state.username,
       email: state.email,
       password: state.password,
@@ -98,8 +98,16 @@ function SignUp(props) {
         window.alert("Account successfully created");
       }
     }).catch((err) => {
-      console.log(err);
-      window.alert("Error creating account");
+      console.log(err.response.data);
+      if(err.message === "Network Error"){
+        window.alert("Server's Offline");
+      }else if(err.response.data === "Error inserting data into database"){
+        window.alert("The Matric number/Application id already has an entry");
+      }else if(err.response.data === "Username and matriculation number combination already exists. Please choose different credentials."){
+        alert("Credential/s already exist. Use different ones");
+      }else if(err.message === "Request failed with status code 500"){
+        window.alert("Server's Offline");
+      }
     });
   }
 
@@ -121,7 +129,7 @@ function SignUp(props) {
           <label htmlFor="matric_num">Matric Number/Applic ID</label>
           <label className="errors">{matricNumError}</label>
           <input type="text" id="matric_num" onChange={(e) => handleInputChange(e, 'matric_num')} />
-          {formValid ? (<label className="submitting_confirmed"><FaCheck className='form_validated'/></label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
+          {formValid ? "": (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <button className="submit" disabled={!formValid}>Register</button>
           <p id="signIn_link">Already have an account? Sign in <a className="links" href="/">here</a></p>
         </form>

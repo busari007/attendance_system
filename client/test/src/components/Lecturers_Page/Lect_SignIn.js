@@ -54,7 +54,7 @@ function LectSignIn(props) {
   const handleSubmit = (e) => {
     console.log(window.location.hostname);
     e.preventDefault();
-    Axios.post(`https://vercel-backend-test-azure.vercel.app/lectLogIn`, { //http://localhost:5000
+    Axios.post(`http://${window.location.hostname}:5000/lectLogIn`, { //http://localhost:5000
       lect_username: state.lect_username,
       lect_password: state.lect_password
     }).then((response) => {
@@ -70,9 +70,11 @@ function LectSignIn(props) {
         console.log(response.status);
       }
     }).catch((err) => {
-      console.error(err.message);
+      console.error(err);
       if (err.message === "Request failed with status code 401") {
         window.alert("Invalid Details");
+      }else if(err.message === "Network Error"){
+        window.alert("Server's Offline");
       }
     });
   };
@@ -89,10 +91,11 @@ function LectSignIn(props) {
           <label htmlFor="password">Password</label>
           <label className="errors">{passwordError}</label>
           <input type="password" id="password" onChange={handlePasswordChange} />
-          {formValid ? (<label className="submitting_confirmed"><FaCheck className='form_validated'/></label>) : (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
+          {formValid ? "": (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <button className="submit" disabled={!formValid}>{"Log In"}</button>
           <p id="signIn_link">Don't have an account? Sign up <a className="links" href="/lectSignUp">here</a></p>
-        </form>
+        </form>   
+        <a className="links" href="/changePassword" style={{position:"absolute",bottom:10,right:10,textDecoration:"none"}}>Change Password</a>
       </div>
       <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/">Student?</a></p>
      </div>
