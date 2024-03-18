@@ -68,7 +68,13 @@ const LectAddCourses = (props) => {
       }
     }).catch((err) => {
       console.log(err);
-      window.alert("Error, please try again");
+      if (err.response.data === "Course already exists for the specified matric_num or lect_id"){
+        alert("You have already registered this course");
+      }else if(err.message === "Network Error"){
+        alert("Server's Offline");
+      }else if(err.message === "Request failed with status code 500"){
+        alert("Internal Server Error");
+      }
     });
   }
 
@@ -112,31 +118,35 @@ const LectAddCourses = (props) => {
         <FaCopyright style={{ position: "absolute", bottom: 5, left: 5, fontSize: 30, color: '#2a2aaf' }} />
       </div>
 
-      <div className="course_container">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="session">Session</label>
-            <input type="text" id="session" onChange={handleChange} />
-            <div className="error-message">{sessionError}</div>
+      <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
+            <label style={{fontSize:'23px'}} className="course_container_header" htmlFor="session">Session</label>
+            <div className="course_container_content">
+            <input style={{marginBottom:"5%", marginTop:'-1%'}} type="text" id="session" placeholder="e.g. 2024/2025" onChange={handleChange} />
+            <label className="errors">{sessionError}</label>
+            </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="department">Department</label>
-            <input type="text" id="department" onChange={handleChange} />
-            <div className="error-message">{departmentError}</div>
+          <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
+            <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="department">Department</label>
+            <div className="course_container_content">
+            <input type="text" id="department" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
+            <label className="errors">{departmentError}</label>
+            </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="course_name">Course Name</label>
-            <input type="text" id="course_name" onChange={handleChange} />
-            <div className="error-message">{courseNameError}</div>
+          <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
+            <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="course_name">Course Name</label>
+            <div className="course_container_content">
+            <input type="text" id="course_name" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
+            <label className="errors">{courseNameError}</label>
+            </div>
           </div>
-          <div className="form-group">
-            <label htmlFor="course_code">Course Code</label>
-            <input type="text" id="course_code" onChange={handleChange} />
-            <div className="error-message">{courseCodeError}</div>
+          <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
+            <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="course_code">Course Code</label>
+            <div className="course_container_content">
+            <input type="text" id="course_code" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
+            <label className="errors">{courseCodeError}</label>
+            </div>
           </div>
-          <button type="submit" disabled={!formValid}>Submit</button>
-        </form>
-      </div>
+          <button type="submit" style={{padding:'1%', width:'11.5%', marginLeft:'43%'}} className="submit" disabled={!formValid} onClick={handleSubmit}>Submit</button>
     </div>
   );
 }

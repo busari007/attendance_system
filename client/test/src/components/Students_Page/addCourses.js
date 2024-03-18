@@ -11,41 +11,46 @@ const AddCourses = (props)=> {
    const [isOpen, setOpen] = useState(false);
    const sidebarRef = useRef(null); 
    const [state,setState] = useState({
-      session:"",
-      department:"",
       course_name:"",
-      course_code:""
-    });
+      course_code:"",
+      department:"",
+      session:"",
+      course_id:""
+});
+   const [courses,setCourses] = useState([]);
 
- function handleSubmit(e){
-    e.preventDefault();
-    Axios.post(`http://${window.location.hostname}:5000/courses`,{
-      session:state.session,
-      course_name:state.course_name,
-      course_code:state.course_code,
-      department:state.department,
+ function handleSubmit(e){ 
+  e.preventDefault();
+    let [courseName, courseCode, courseID] = state.course_id.split(" ");
+    Axios.post(`http://${window.location.hostname}:5000/studentCourses`,{
+      course_id: courseID || courses[0].course_id,
       matric_num: matric_num  //gotten from ./home
     }).then((result)=>{
       console.log(result);
       if(result.status === 200){
-        window.alert("Successfully registered courses");
+        window.alert(`Successfully registered ${courseName || courses[0].course_name}`);
         window.location.reload();  //reloads page after courses have been sent
       }
     }).catch((err)=>{
       console.log(err);
-      if(err){
-        window.alert("Error please try again");
+      if (err.response.data === "Course already exists for the specified matric_num or lect_id"){
+        alert("You have already registered this course");
+      }else if(err.message === "Network Error"){
+        alert("Server's Offline");
+      }else if(err.message === "Request failed with status code 500"){
+        alert("Server Error");
+      }else if(err.message === 'Request failed with status code 409'){
+        alert("You have already registered this course");
       }
     });
   }
 
     function handleChange(e){
-     let name = e.target.id;
-     let value = e.target.value;
-     setState((prevState) => ({
-      ...prevState,              
-      [name]: value
-    }));
+      const { id, value } = e.target;
+      setState(prevState => ({
+        ...prevState,
+        [id]: value,
+      }));
     }
 
     function handleToggle(){
@@ -61,6 +66,20 @@ const AddCourses = (props)=> {
       
 
     useEffect(() => {
+        Axios.get(`http://${window.location.hostname}:5000/courses`).then((res)=>{
+           console.log(res);
+           setCourses(res.data);
+           console.log(courses);
+           console.log("The course_id is " + courses[0].course_id);
+        }).catch((err)=>{
+            console.log(err);
+            if(err.message === "Network Error"){
+              alert("Server's Offline");
+            }else if(err.message === "Request failed with status code 500"){
+              alert("Server Error");
+              alert("Can't recieve the courses");
+            }
+        });
         document.addEventListener('mousedown', handleOutsideClick);
       
         return () => {
@@ -95,24 +114,40 @@ const AddCourses = (props)=> {
     <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
       <label className="course_container_header">Enter your Session</label>
       <div className="course_container_content">
-      <input style={{marginBottom:"5%", marginTop:'-1%'}} type="text" id="session" placeholder="e.g. 2024/2025" onChange={(e)=>handleChange(e)}/>
+      <select onChange={(e) => handleChange(e)} id='session'>
+      {courses && courses.map((course) => (
+            <option key={course.course_id || 1} value={`${course.session || ''}`}>
+             {course.session}
+            </option>
+          ))}
+      </select>
       </div>
     </div>
     <div style={{marginBottom:'2%'}} className="course_container">
     <label className="course_container_header">Enter your Department</label>
       <div className="course_container_content">
-      <input style={{marginBottom:"5%", marginTop:'-1%'}} type="text" id="department" placeholder="Department" onChange={(e)=>handleChange(e)}/>
+      <select onChange={(e) => handleChange(e)} id='department'>
+      {courses && courses.map((course) => (
+            <option key={course.course_id || 1} value={`${course.department || ''}`}>
+             {course.department}
+            </option>
+          ))}
+      </select>
      </div>
     </div>
-    <div className="course_container">
-      <label className="course_container_header">Enter your course names and codes</label>
+    <div style={{marginTop:'3%'}} className="course_container">
+      <label className="course_container_header">Course Code and Code</label>
       <div className="course_container_content">
-      <input type="text" id="course_name" placeholder="Course Name" onChange={(e)=>handleChange(e)}/>
-      <input type="text" id="course_code" placeholder="Course Code" onChange={(e)=>handleChange(e)}/>
+      <select onChange={(e) => handleChange(e)} id='course_id'>
+      {courses && courses.map((course) => (
+            <option key={course.course_id || 1} value={`${course.course_code || ''} ${course.course_name || ''} ${course.course_id || ''}`}>
+             {course.course_name} {course.course_code}
+            </option>
+          ))}
+      </select>
+      </div> 
       </div>
-      {/*<h1 style={{color:'#0000EE', visibility:"hidden"}}>Go to Course List to check list of courses</h1>*/}
-    </div>
-    <button id="course_submit" className="submit" onClick={(e)=>handleSubmit(e)}>Submit</button>
+    <button id="course_submit" className="submit" disabled={false} onClick={(e)=>handleSubmit(e)}>Submit</button>
     </div>
    );
 }

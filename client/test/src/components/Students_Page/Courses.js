@@ -25,6 +25,29 @@ function Courses(props){
         }
       };
       
+      function handleDelete(course_name,course_code,course_id){
+        console.log(course_name,course_code,course_id);
+         Axios.post(`http://${window.location.hostname}:5000/deleteCourses`,{
+            course_code:course_code,
+            course_name:course_name,
+            course_id:course_id
+         }).then((result)=>{
+            console.log(result);
+            alert(`${course_name} successfully deleted`);
+            setCourses(prevCourses => prevCourses.filter(course => course.course_id !== course_id));
+         }).catch((error)=>{
+            console.log(error);
+            if(error.message === "Network error"){
+                alert("The server's Offline");
+            }else if(error.message === "Request failed with status code 500"){
+              alert("Internal Server Error");
+          }else if(error.response.data === "Error deleting course from the database"){
+            alert("Cant delete course as it has attendance data");
+          }else{
+            alert("Error deleting course");
+            }
+         });
+      }
 
     useEffect(() => {
         Axios.post(`http://${window.location.hostname}:5000/getCourses`,{
@@ -88,8 +111,9 @@ function Courses(props){
    {error ? <h2 style={{color: "red", textAlign:'center'}}>{error.message}</h2> : <div className="course_container" style={{ marginTop:'2%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
     <ul>
         {courses.map((course) => (  //displays the courses fetched
-          <li style={{margin:'2%'}}>
+          <li key={course.course_id} style={{margin:'2%'}}>
             {course.course_name} - {course.course_code}
+            <button className="delete" onClick={()=>handleDelete(course.course_name,course.course_code,course.course_id)}>X</button>
           </li>
         ))}
       </ul>

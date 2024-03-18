@@ -26,6 +26,7 @@ function QRCodeScanner(props) {
     const [lect_longitude, setLectLongitude] = useState(null);
     const [isWithinBoundary, setIsWithinBoundary] = useState();
     const classroomWidth = 20; // Specify the width of the classroom boundary in meters
+    const [distance, setDisance] = useState();
     const [loading, setLoading] = useState(true);
 
     const handleDisplay = () => {
@@ -52,17 +53,12 @@ function QRCodeScanner(props) {
                         const { latitude, longitude } = res.data[0];
                         setLectLatitude(latitude);
                         setLectLongitude(longitude);
-                        console.log("The lecturers latitude and longitude are " + lect_latitude + " " + lect_longitude);
     
                         // Verify video element and properties before use
                         const videoElement = document.querySelector('video'); // Selects the first <video> element in the document
                         if (videoElement && videoElement.videoWidth !== null) {
-                            // Calculate distance between lecturer's location and scanned location
-                            const distance = calculateDistance(latitude, longitude, latitude, longitude);
-                            console.log("Distance between lecturer's location and scanned location:", distance);
-    
                             // Check if distance is within the boundary
-                            if (distance <= classroomWidth) {
+                           if (distance <= classroomWidth) {
                                 setIsWithinBoundary(true);
                                 if (course_id !== "") {
                                     Axios.post(`http://${window.location.hostname}:5000/attendance`, {
@@ -75,22 +71,39 @@ function QRCodeScanner(props) {
                                         navigate('/home', { state: { username, matric_num } });
                                     }).catch((err) => {
                                         console.log(err);
+                                    if(err.message === "Request failed with status code 500"){
+                                        alert("Internal Server Error");
+                                    }else if(err.message === "Network Error"){
+                                      alert("Server's Offline");
+                                  }
                                     });
+                                    alert("you are within boundary");
                                 } else {
                                     alert("course_id not sent");
                                 }
                             } else {
                                 setIsWithinBoundary(false);
                                 alert("You are not within the class' boundary");
+                                alert("Your attendance will not be recorded");
                             }
                         } else {
                             console.error("Video element or properties not available.");
                         }
                     }).catch((err) => {
                         console.log(err);
+                        if(err.message === "Request failed with status code 500"){
+                            alert("Internal Server Error");
+                        }else if(err.message === "Network Error"){
+                          alert("Server's Offline");
+                      }
                     });
                 }).catch((err) => {
-                    console.log(err);
+                    console.log(err);  
+                    if(err.message === "Request failed with status code 500"){
+                        alert("Internal Server Error");
+                    }else if(err.message === "Network Error"){
+                      alert("Server's Offline");
+                  }
                 });
             }
         } catch (error) {
@@ -127,25 +140,45 @@ function QRCodeScanner(props) {
                 setLatitude(latitude);
                 setLongitude(longitude);
                 setLoading(false);
+                console.log("The user's latitude and longitude are "+ latitude + " " + longitude);
+                // Function to calculate distance between two points using Haversine formula
+                const calculateDistance = (lat1, lon1, lat2, lon2) => {
+                    const R = 6371; // Radius of the Earth in kilometers
+                    const dLat = (lat2 - lat1) * (Math.PI / 180); // Convert degrees to radians
+                    const dLon = (lon2 - lon1) * (Math.PI / 180); // Convert degrees to radians
+                    const a =
+                        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                    const distanceKm = R * c; // Distance in kilometers
+                    const distanceMeters = distanceKm * 1000; // Convert distance to meters
+                    return distanceMeters; // Distance in meters
+                };
+                
+                // Coordinates for Point 1
+                const lat1 = lect_latitude;
+                const lon1 = lect_longitude;
+                
+                // Coordinates for Point 2
+                const lat2 = latitude;
+                const lon2 = longitude;
+                
+                console.log("The lecturer's latitude and longitude are "+ lect_latitude + " " + lect_longitude);
+                
+                if(lat1 !== null && lon1 !== null){
+                // Calculate distance both ways and compare
+                const distanceFromPoint1To2 = calculateDistance(lat1, lon1, lat2, lon2);
+                setDisance(distanceFromPoint1To2);
+                console.log(distance);  
+                }else{
+                  console.log("They null");
+                }
             });
         } else {
             console.log("Geolocation is not supported by this browser.");
         }
-    }, []);
-
-    // Function to calculate distance between two points using Haversine formula
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-        const R = 6371; // Radius of the Earth in kilometers
-        const dLat = (lat2 - lat1) * (Math.PI / 180); // Convert degrees to radians
-        const dLon = (lon2 - lon1) * (Math.PI / 180); // Convert degrees to radians
-        const a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        const distance = R * c; // Distance in kilometers
-        return distance * 1000; // Convert distance to meters
-    };
+    }, [latitude,longitude,lect_latitude,lect_longitude,distance]);
 
     if (loading) {
       return <div><p style={{marginTop:"19%",fontSize:"40px",fontWeight:'bolder', textAlign:"center"}}>Loading... {("ensure location services are turned on")}</p></div>;

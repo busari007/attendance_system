@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { FaArrowLeft, FaBars, FaBell, FaCopy } from "react-icons/fa";
-import { useLocation, useNavigate } from "react-router-dom";
+import { redirect, useLocation, useNavigate } from "react-router-dom";
 import Axios from "axios";
 import logo from "../Pictures/logo.jpg";
 import "../Styles/Home.css";
@@ -32,7 +32,6 @@ function LectHome() {
     })
       .then(({ data: { lect_id, courseCodes } }) => {
         setLectId(lect_id);
-        console.log(courseCodes);
         if(courseCodes[0] !== null){
         Axios.post(
           `http://${window.location.hostname}:5000/getStudentsAttendance`,
@@ -42,20 +41,33 @@ function LectHome() {
         )
           .then((res) => {
             setAttendance(res.data.records);
+            console.log(attendance);
             setLoading(false);
           })
           .catch((err) => {
-            console.error("Error fetching records:", error);
+            console.log("Error fetching records:", err);
+            if(err.message === "Request failed with status code 500"){
+              alert("Internal Server Error");
+          }else if(err.message === "Network Error"){
+            alert("Server's Offline");
+        }else if(err.response.data.message === "No attendance records found for the specified course_code"){
+          alert("No attendance data found");
+          setLoading(false);
+      }
           });}else{
             setLoading(false);
             alert("No attendance data found")
-          }
+          } 
       })
       .catch((err) => {
         console.log(err);
         if(err.response.data.message === "Lect Id not found"){
           alert("The lecturer doesnt exist");
-        }
+        }else if(err.message === "Request failed with status code 500"){
+          alert("Internal Server Error");
+      }else if(err.message === "Network Error"){
+        alert("Server's Offline");
+    }
       });
     document.addEventListener("mousedown", handleOutsideClick);
     
@@ -64,9 +76,29 @@ function LectHome() {
     };
   }, [lect_username]);
 
+  function handleDelete(attendanceID,course_id){
+    console.log("Its attendanceID is ", attendanceID, " and its course_id is", course_id);
+     Axios.post(`http://${window.location.hostname}:5000/deleteRecord`,{
+        attendanceID: attendanceID,
+        course_id: course_id
+     }).then((result)=>{
+        console.log(result);
+        alert(`Record successfully deleted`);
+        setAttendance(prevAttendance => prevAttendance.filter(attendance => attendance.attendanceID !== attendanceID));
+     }).catch((error)=>{
+        console.log(error);
+        if(error.message === "Network error"){
+            alert("The server's Offline");
+        }else if(error.message === "Request failed with status code 500"){
+          console.log("Internal Server Error");
+        }else{
+        alert("Error deleting course");
+        }
+     });
+  }
 
 
-  const handleEdit = (newValue, rowIndex, columnIndex,attendanceID) => {
+  const handleEdit = (newValue, rowIndex, columnIndex,attendanceID, matric_num) => {
     const updatedAttendance = [...attendance];
     updatedAttendance[rowIndex][columnIndex] = newValue;
     setAttendance(updatedAttendance);
@@ -76,10 +108,15 @@ function LectHome() {
       newStatus: newValue
     })
     .then(response => {
-      console.log("Status updated successfully");
+      console.log(`Status for ${matric_num} updated successfully`);
     })
     .catch(error => {
       console.error("Error updating status:", error);
+      if(error.message === "Network error"){
+        alert("The server's Offline");
+    }else if(error.message === "Request failed with status code 500"){
+      console.log("Internal Server Error");
+    }
     });
   };
 
@@ -182,10 +219,11 @@ function LectHome() {
                       className="status"
                       contentEditable
                       suppressContentEditableWarning
-                      onBlur={(event) => handleEdit(event.target.innerText, entryIndex, 3,entry.attendanceID)}
+                      onBlur={(event) => handleEdit(event.target.innerText, entryIndex, 3,entry.attendanceID,entry.matric_num)}
                     >
                       {entry.status}
                     </td>
+                    <td className="delete_record" onClick={()=>handleDelete(entry.attendanceID,entry.course_id)}>X</td>
                   </tr>
                 ))}
               </tbody>

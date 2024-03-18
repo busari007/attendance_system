@@ -13,21 +13,21 @@ const QrCode = () => {
   const location = useLocation();
   const { lect_username, lect_id } = location.state;
   const [courses, setCourses] = useState([]);
-  const [courseCode, setCourseCode] = useState([]);
+  const [courseID, setCourseID] = useState([]);
   const [data, setData] = useState([]);
   const [qrCode, setQRCode] = useState('');
   const [isCodeGenerated, setIsCodeGenerated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [attendanceWindow, setAttendanceWindow] = useState(30);
+  const [attendanceWindow, setAttendanceWindow] = useState(6);
   const [timerId, setTimerId] = useState(null);
 
   function handleChange(e) {
     let value = e.target.value;
-    let [courseName, courseCode] = value.split(" ");
+    let [courseName, courseCode, courseID] = value.split(" ");
     setData([courseName, courseCode]); 
     setIsCodeGenerated(false);
-    setCourseCode(courseCode);
+    setCourseID(courseID);
   }  
 
   function handleQRCode() {
@@ -52,20 +52,20 @@ const QrCode = () => {
       alert(`Attendance Window set to ${attendanceWindow} seconds`);
       const id = setTimeout(() => {
         setIsCodeGenerated(false);
-        console.log(courseCode);
-        // Axios.post(`http://${window.location.hostname}:5000/absent`,{
-        //   course_code: courseCode
-        // }).then((res)=>{
-        //   console.log(res);
-        // }).catch((err)=>{
-        //   console.log(err);
-        //   console.log(err.response.data.error)
-        //   if(err.response.data.error === "No present records found within the past 5 minutes"){
-        //     alert("No student has been marked present within the past 5 minutes");
-        //   }
-        // });
+        console.log(courseID);
+        Axios.post(`http://${window.location.hostname}:5000/absent`,{
+          course_id: courseID
+        }).then((res)=>{
+          console.log(res);
+        }).catch((err)=>{
+          console.log(err);
+          console.log(err.response.data.error)
+          if(err.response.data.error === "No present records found within the past 5 minutes"){
+            alert("No student has been marked present within the past 5 minutes");
+          }
+        });
         alert("Attendance Window Closed");
-      }, 30000); // Timer set to 30 seconds
+      }, 6000); // Timer set to 6 seconds
   
        setTimerId(id);
     }
@@ -85,15 +85,15 @@ const QrCode = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(function(position) {
         const { latitude, longitude } = position.coords;
-        //console.log("Latitude:", latitude, "Longitude:", longitude);
+        console.log("Latitude:", latitude, "Longitude:", longitude);
         Axios.post(`http://${window.location.hostname}:5000/updateLocation`,{
           latitude: latitude,
           longitude: longitude,
           lect_id: lect_id
         }).then((res)=>{
-          //alert("Location on table updated")
+          alert("Location on table updated")
         }).catch((err)=>{
-          //alert("Location not updated")
+          alert("Location not updated")
         });
       });
     } else {
@@ -110,14 +110,14 @@ const QrCode = () => {
       const initialSelection = [...response.data.courses] ;
       if(courses.length === 0){
         setData([initialSelection[0].course_name, initialSelection[0].course_code]);
-        setCourseCode([initialSelection[0].course_code]);
+        setCourseID([initialSelection[0].course_id]);
       } else {
         return;
       }
       const receivedCourses = response.data.courses;
       if (receivedCourses && receivedCourses.length > 0) {
         setCourses(receivedCourses); 
-       console.log(courseCode);
+       console.log(courseID);
       } else {
         setCourses([{ course_name: 'No Courses' }]);
       }
@@ -139,7 +139,7 @@ const QrCode = () => {
     .finally(() => {
       setLoading(false);
     });
-  }, [lect_id, isCodeGenerated,courseCode]);
+  }, [lect_id, isCodeGenerated,courseID]);
 
   useEffect(() => {
     if (courses.length > 0 && courses[0].course_name !== 'No Courses') {
@@ -185,7 +185,7 @@ const QrCode = () => {
         <label className='codeTitle'>Pick a course:</label>
         <select name="data" onChange={(e) => handleChange(e)}>
           {courses && courses.map((course) => (
-            <option key={course.course_code || 1} value={`${course.course_name || ''} ${course.course_code || ''}`}>
+            <option key={course.course_code || 1} value={`${course.course_name || ''} ${course.course_code || ''} ${course.course_id || ''}`}>
               {course.course_name} {course.course_code}
             </option>
           ))}

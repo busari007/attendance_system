@@ -25,7 +25,30 @@ function LectCourses(props){
         }
       };
       
+    function handleDelete(course_name,course_code,course_id){
+      console.log(course_name,course_code,course_id);
+       Axios.post(`http://${window.location.hostname}:5000/deleteLectCourses`,{
+          course_id:course_id,
+          course_code: course_code,
+          course_name: course_name
+       }).then((result)=>{
+          console.log(result);
+          alert(`${course_name} successfully deleted`);
+          setCourses(prevCourses => prevCourses.filter(course => course.course_id !== course_id));
+          Axios.post(`http://${window.location.hostname}:5000/deleteCourses`,{
+            course_id: course_id
+          }).then((res)=>{ console.log("Related students data deleted")}).catch((err)=>{console.log(err); console.log("Students' data could'nt be deleted")});
+       }).catch((error)=>{
+          console.log(error);
+          if(error.message === "Network error"){
+              alert("The server's Offline");
+          }else{
+          alert("Error deleting course");
+          }
+       });
+    }
 
+      
     useEffect(() => {
         Axios.post(`http://${window.location.hostname}:5000/getLectCourses`,{
           lect_id: lect_id  //uses the matric number to filter the courses table to send only courses with the matric numbers value(its a foreign key in the db)
@@ -35,12 +58,13 @@ function LectCourses(props){
           setCourses(response.data.courses);
           console.log(response);
           setLoading(false);
+          console.log(courses);
         })
         .catch((error) => {
           console.error("Error fetching courses:", error);  
           console.log(error.response.data.message);
           if(error.message === "Request failed with status code 500"){
-            alert("Server's Offline");
+            alert("Internal Server Error");
             setError({message:"Backend Error. Please Refresh"});
             }else if(error.message === "Request failed with status code 401"){
               alert("No courses have been registered");
@@ -89,8 +113,9 @@ function LectCourses(props){
     {error ? <h2 style={{color: "rgb(255, 35, 35)", textAlign:"center"}}>{error.message}</h2> : <div className="course_container" style={{ marginTop:'2%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
     <ul>
         {courses.map((course) => (  //displays the courses fetched
-          <li key={lect_id} style={{margin:'2%'}}>
+          <li key={course.course_id || 1} style={{margin:'1%'}}>
             {course.course_name} - {course.course_code}
+          <button className="delete" onClick={()=>handleDelete(course.course_name,course.course_code,course.course_id)}>X</button>
           </li>
         ))}
       </ul>
