@@ -20,7 +20,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "set HTTPS=true&&set SSL_CRT_FILE=C:/Users/aweem/OneDrive/Documents/attendance_system/https_setup/cert.crt&&set SSL_KEY_FILE=C:/Users/aweem/OneDrive/Documents/attendance_system/https_setup/cert.key&&react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

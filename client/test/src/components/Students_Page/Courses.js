@@ -103,7 +103,7 @@ function Courses(props){
         <li><button style={{marginLeft:'35.5%'}} className="sidebar-links" onClick={()=>{navigate('/home', {state:{ username, matric_num }})}}>Home</button></li>
         <li><button className="sidebar-links" onClick={()=>{navigate('/addCourses', {state:{ username, matric_num }})}}>Add Courses</button></li>
         <li><button style={{marginRight:'29.5%'}} className="sidebar-links" onClick={()=>{navigate('/qrCodeScanner', {state:{ username, matric_num }})}}>QRCode Scanner</button></li> 
-        <li><a style={{marginLeft:'32.5%'}} className="sidebar_content" href="/">Log Out</a></li>      
+        <li><a style={{marginLeft:'32.5%'}} className="sidebar_content" href="/signIn">Log Out</a></li>      
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
@@ -111,13 +111,14 @@ function Courses(props){
    {error ? <h2 style={{color: "red", textAlign:'center'}}>{error.message}</h2> : <div className="course_container" style={{ marginTop:'2%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
     <ul>
         {courses.map((course) => (  //displays the courses fetched
-          <li key={course.course_id} style={{margin:'2%'}}>
+          <li key={course.course_id} style={{margin:'2%', marginTop:"3%"}}>
             {course.course_name} - {course.course_code}
-            <button className="delete" onClick={()=>handleDelete(course.course_name,course.course_code,course.course_id)}>X</button>
+            <button style={{ textAlign:"center"}} className="delete" key={course.course_id} onClick={()=>handleDelete(course.course_name,course.course_code,course.course_id)}>X</button>
           </li>
         ))}
       </ul>
-      </div> }
+      </div>
+      }
     </div>
    );
 }

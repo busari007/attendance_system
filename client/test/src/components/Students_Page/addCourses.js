@@ -21,7 +21,12 @@ const AddCourses = (props)=> {
 
  function handleSubmit(e){ 
   e.preventDefault();
-    let [courseName, courseCode, courseID] = state.course_id.split(" ");
+    const parts = state.course_id.split(" ");
+    const courseID = parts.pop(); // Extract the last part as the course ID
+    const courseCode = parts.pop(); // Extract the second last part as the course code
+    const courseName = parts.join(" "); // Join the remaining parts as the course name
+
+    console.log(courseName, courseCode, courseID);
     Axios.post(`http://${window.location.hostname}:5000/studentCourses`,{
       course_id: courseID || courses[0].course_id,
       matric_num: matric_num  //gotten from ./home
@@ -105,7 +110,7 @@ const AddCourses = (props)=> {
         <li><button style={{marginLeft:'35.5%'}} className="sidebar-links" onClick={()=>{navigate('/home', {state:{ username, matric_num }})}}>Home</button></li>
         <li><button className="sidebar-links" onClick={()=>{navigate('/courses', {state:{ username, matric_num }})}}>Course List</button></li>  {/*Passes the username and matric_num into ./courses as state in the navigate function */}
         <li><button style={{marginRight:'29.5%'}} className="sidebar-links" onClick={()=>{navigate('/qrCodeScanner', {state:{ username, matric_num }})}}>QRCode Scanner</button></li> 
-        <li><a style={{marginLeft:'32.5%'}} className="sidebar_content" href="/">Log Out</a></li>      
+        <li><a style={{marginLeft:'32.5%'}} className="sidebar_content" href="/signIn">Log Out</a></li>      
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
@@ -153,3 +158,4 @@ const AddCourses = (props)=> {
 }
 
 export default AddCourses;
+

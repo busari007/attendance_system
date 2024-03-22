@@ -239,9 +239,9 @@ ul{
 }
 
 .qrButton.after {
-  margin-top: 8%;
+  margin-top: 0;
   background-color: red;
-  margin-left: 49.5%;
+  margin-left: 59.5%;
 }
 
 .qrReader{
@@ -348,6 +348,22 @@ ul{
 .delete_record:hover{
   background-color: rgb(196, 0, 0);
   cursor: pointer;
+}
+
+.attendanceTableContainer {
+  position: relative;
+  display: flex;
+}
+
+
+.delete_record {
+  position: absolute;
+  margin: 9.7rem 34.5rem;
+  cursor: pointer;
+  color: white;
+  width: fit-content;
+  font-size: xx-small;
+  border-radius: 4px;
 }
 
 @media (max-width: 720px) {

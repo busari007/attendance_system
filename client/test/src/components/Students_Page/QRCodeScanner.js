@@ -175,10 +175,13 @@ function QRCodeScanner(props) {
                   console.log("They null");
                 }
             });
-        } else {
-            console.log("Geolocation is not supported by this browser.");
+        } else { 
+            setLatitude(6.894331);
+            setLongitude(3.722595);
+            setLoading(false);
+            console.log("Location not identified. New Horizon has been set as the default");
         }
-    }, [latitude,longitude,lect_latitude,lect_longitude,distance]);
+    }, [lect_latitude,lect_longitude,distance]);
 
     if (loading) {
       return <div><p style={{marginTop:"19%",fontSize:"40px",fontWeight:'bolder', textAlign:"center"}}>Loading... {("ensure location services are turned on")}</p></div>;
@@ -202,7 +205,7 @@ function QRCodeScanner(props) {
                     <li><button style={{ marginLeft: '35.5%' }} className="sidebar-links" onClick={() => { navigate('/home', { state: { username, matric_num } }) }}>Home</button></li>
                     <li><button style={{ marginRight: '29.5%' }} className="sidebar-links" onClick={() => { navigate('/courses', { state: { username, matric_num } }) }}>Course List</button></li>
                     <li><button className="sidebar-links" onClick={() => { navigate('/addCourses', { state: { username, matric_num } }) }}>Add Courses</button></li>
-                    <li><a style={{ marginLeft: '32.5%' }} className="sidebar_content" href="/">Log Out</a></li>
+                    <li><a style={{ marginLeft: '32.5%' }} className="sidebar_content" href="/signIn">Log Out</a></li>
                 </ul>
                 <FaCopyright style={{ position: "absolute", bottom: 5, left: 5, fontSize: 30, color: '#2a2aaf' }} />
             </div>
@@ -221,20 +224,6 @@ function QRCodeScanner(props) {
                 >
                     {isCodeGenerated ? 'X' : 'Display'}
                 </button>
-            </div>
-            <div>
-                {/* Render latitude and longitude
-                {latitude !== null && longitude !== null && (
-                    <p>Your location - Latitude: {latitude}, Longitude: {longitude}</p>
-                )}
-                {/* Render lecturer's latitude and longitude 
-                {lect_latitude !== null && lect_longitude !== null && (
-                    <p>Lecturer's location - Latitude: {lect_latitude}, Longitude: {lect_longitude}</p>
-                )}
-                {/* Check if scanned location is within boundary 
-                {isWithinBoundary && <p>Scanned location is within the classroom boundary.</p>}
-                {!isWithinBoundary && <p>Scanned location is outside the classroom boundary.</p>}
-                */}
             </div>
         </div>
     );

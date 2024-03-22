@@ -192,44 +192,51 @@ function LectHome() {
         />
       </div>
       <div className="records_container">
-        {Array.from(new Set(attendance.map((data) => data.course_code))).map((courseCode) => {
-          const courseData = attendance.filter((data) => data.course_code === courseCode);
+      {Array.from(new Set(attendance.map((data) => data.course_code))).map((courseCode) => {
+  const courseData = attendance.filter((data) => data.course_code === courseCode);
 
-          return (
-            <table
-              className={`attendanceTable ${attendance.length > 4 ? "scrollable" : ""}`}
-              key={courseCode}
-            >
-              <caption>{courseData[0].course_name} - {courseCode}</caption>
-              <thead>
-                <tr>
-                  <th>Students' Matric Numbers</th>
-                  <th>Attendance date</th>
-                  <th>Attendance time</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {courseData.map((entry, entryIndex) => (
-                  <tr key={entryIndex}>
-                    <td>{entry.matric_num}</td>
-                    <td>{entry.dateTaken}</td>
-                    <td>{entry.timeTaken}</td>
-                    <td
-                      className="status"
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(event) => handleEdit(event.target.innerText, entryIndex, 3,entry.attendanceID,entry.matric_num)}
-                    >
-                      {entry.status}
-                    </td>
-                    <td className="delete_record" onClick={()=>handleDelete(entry.attendanceID,entry.course_id)}>X</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          );
-        })}
+  return (
+    <div className="attendanceTableContainer">
+      <table
+        className={`attendanceTable ${attendance.length > 4 ? "scrollable" : ""}`}
+        key={courseCode}
+      >
+        <caption>{courseData[0].course_name} - {courseCode}</caption>
+        <thead>
+          <tr>
+            <th>Students' Matric Numbers</th>
+            <th>Attendance date</th>
+            <th>Attendance time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {courseData.map((entry, entryIndex) => (
+            <tr key={entryIndex}>
+              <td>{entry.matric_num}</td>
+              <td>{entry.dateTaken}</td>
+              <td>{entry.timeTaken}</td>
+              <td
+                className="status"
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(event) => handleEdit(event.target.innerText, entryIndex, 3, entry.attendanceID, entry.matric_num)}
+              >
+                {entry.status}
+              </td>
+              <td> 
+                <div className="delete" style={{ textAlign: "center", fontSize:"25px",padding:"10px" }} onClick={() => handleDelete(entry.attendanceID, entry.course_id)}>X</div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+})}
+
+
+
         <p>{attendance.length === 0 && 'No attendance data yet'}</p>
       </div>
     </div>

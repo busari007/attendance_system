@@ -131,7 +131,7 @@ function SignUp(props) {
           <input type="text" id="matric_num" onChange={(e) => handleInputChange(e, 'matric_num')} />
           {formValid ? "": (<label className="submitting_confirmation">Ensure all fields are filled</label>)}
           <button className="submit" disabled={!formValid}>Register</button>
-          <p id="signIn_link">Already have an account? Sign in <a className="links" href="/">here</a></p>
+          <p id="signIn_link">Already have an account? Sign in <a className="links" href="/signIn">here</a></p>
         </form>
       </div>
       <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/lectSignUp">lecturer?</a></p>

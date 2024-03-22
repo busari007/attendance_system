@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { FaArrowLeft, FaBars, FaBell, FaCopyright } from 'react-icons/fa';
 import logo from "../Pictures/logo.jpg";
 import Axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const LectAddCourses = (props) => {
+const LectAddCourses = () => {
   const location = useLocation();
   const { lect_username, lect_id } = location.state;
   const navigate = useNavigate();
@@ -22,15 +22,15 @@ const LectAddCourses = (props) => {
   const [courseCodeError, setCourseCodeError] = useState("");
   const [formValid, setFormValid] = useState(false);
 
-  function handleChange(e) {
+  const handleChange = useCallback((e) => {
     const { id, value } = e.target;
     setState((prevState) => ({
       ...prevState,
       [id]: value
     }));
-  }
+  }, []);
 
-  const validateForm = () => {
+  const validateForm = useCallback(() => {
     const sessionValid = state.session.trim() !== "";
     const departmentValid = state.department.trim() !== "";
     const courseNameValid = state.course_name.trim() !== "";
@@ -42,18 +42,18 @@ const LectAddCourses = (props) => {
     setCourseCodeError(courseCodeValid ? "" : "Course Code is required");
 
     return sessionValid && departmentValid && courseNameValid && courseCodeValid;
-  };
+  }, [state]);
 
   useEffect(() => {
     setFormValid(validateForm());
-  }, [state]);
+  }, [validateForm]);
 
-  function handleSubmit(e) {
+  const handleSubmit = useCallback((e) => {
+    console.log(state);
     e.preventDefault();
     if (!validateForm()) {
       return; // Do not proceed if form is invalid
     }
-
     Axios.post(`http://${window.location.hostname}:5000/courses`, {
       session: state.session,
       course_name: state.course_name,
@@ -74,26 +74,28 @@ const LectAddCourses = (props) => {
         alert("Server's Offline");
       }else if(err.message === "Request failed with status code 500"){
         alert("Internal Server Error");
+      }else if(err.message === "Request failed with status code 409"){
+        alert(`${state.course_name} already exists`);
       }
     });
-  }
+  }, [lect_id, state, validateForm]);
 
-  function handleToggle() {
+  const handleToggle = useCallback(() => {
     setOpen(!isOpen);
-  }
+  }, [isOpen]);
 
-  const handleOutsideClick = (event) => {
+  const handleOutsideClick = useCallback((event) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
       setOpen(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     document.addEventListener('mousedown', handleOutsideClick);
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, []);
+  }, [handleOutsideClick]);
 
   return (
     <div>
@@ -119,34 +121,34 @@ const LectAddCourses = (props) => {
       </div>
 
       <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
-            <label style={{fontSize:'23px'}} className="course_container_header" htmlFor="session">Session</label>
-            <div className="course_container_content">
-            <input style={{marginBottom:"5%", marginTop:'-1%'}} type="text" id="session" placeholder="e.g. 2024/2025" onChange={handleChange} />
-            <label className="errors">{sessionError}</label>
-            </div>
-          </div>
-          <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
-            <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="department">Department</label>
-            <div className="course_container_content">
-            <input type="text" id="department" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
-            <label className="errors">{departmentError}</label>
-            </div>
-          </div>
-          <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
-            <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="course_name">Course Name</label>
-            <div className="course_container_content">
-            <input type="text" id="course_name" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
-            <label className="errors">{courseNameError}</label>
-            </div>
-          </div>
-          <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
-            <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="course_code">Course Code</label>
-            <div className="course_container_content">
-            <input type="text" id="course_code" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
-            <label className="errors">{courseCodeError}</label>
-            </div>
-          </div>
-          <button type="submit" style={{padding:'1%', width:'11.5%', marginLeft:'43%'}} className="submit" disabled={!formValid} onClick={handleSubmit}>Submit</button>
+        <label style={{fontSize:'23px'}} className="course_container_header" htmlFor="session">Session</label>
+        <div className="course_container_content">
+          <input style={{marginBottom:"5%", marginTop:'-1%'}} type="text" id="session" placeholder="e.g. 2024/2025" onChange={handleChange} />
+          <label className="errors">{sessionError}</label>
+        </div>
+      </div>
+      <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
+        <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="department">Department</label>
+        <div className="course_container_content">
+          <input type="text" id="department" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
+          <label className="errors">{departmentError}</label>
+        </div>
+      </div>
+      <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
+        <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="course_name">Course Name</label>
+        <div className="course_container_content">
+          <input type="text" id="course_name" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
+          <label className="errors">{courseNameError}</label>
+        </div>
+      </div>
+      <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
+        <label style={{fontSize:'23px', marginLeft:'2%'}} htmlFor="course_code">Course Code</label>
+        <div className="course_container_content">
+          <input type="text" id="course_code" className="input-field" style={{ marginBottom: "5%", marginTop: '-1%' }} onChange={handleChange} />
+          <label className="errors">{courseCodeError}</label>
+        </div>
+      </div>
+      <button type="submit" style={{padding:'1%', width:'11.5%', marginLeft:'43%'}} className="submit" disabled={!formValid} onClick={handleSubmit}>Submit</button>
     </div>
   );
 }

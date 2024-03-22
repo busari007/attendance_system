@@ -30,7 +30,7 @@ function LectCourses(props){
        Axios.post(`http://${window.location.hostname}:5000/deleteLectCourses`,{
           course_id:course_id,
           course_code: course_code,
-          course_name: course_name
+          course_name: course_name 
        }).then((result)=>{
           console.log(result);
           alert(`${course_name} successfully deleted`);
@@ -113,9 +113,9 @@ function LectCourses(props){
     {error ? <h2 style={{color: "rgb(255, 35, 35)", textAlign:"center"}}>{error.message}</h2> : <div className="course_container" style={{ marginTop:'2%', border:'none', fontWeight:'600', fontSize:'x-large'}}>
     <ul>
         {courses.map((course) => (  //displays the courses fetched
-          <li key={course.course_id || 1} style={{margin:'1%'}}>
+          <li key={course.course_id} style={{margin:'2%', marginTop:"3%"}}>
             {course.course_name} - {course.course_code}
-          <button className="delete" onClick={()=>handleDelete(course.course_name,course.course_code,course.course_id)}>X</button>
+            <button style={{ textAlign:"center"}} className="delete" key={course.course_id} onClick={()=>handleDelete(course.course_name,course.course_code,course.course_id)}>X</button>
           </li>
         ))}
       </ul>

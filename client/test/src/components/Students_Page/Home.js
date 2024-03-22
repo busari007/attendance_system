@@ -84,7 +84,7 @@ if (loading) {
         <li><button className="sidebar-links" onClick={()=>{navigate('/courses', {state:{ username, matric_num }})}}>Course List</button></li>   {/*username and matric_num are passed into ./courses and ./addCourses as state in the navigate function*/}
         <li><button className="sidebar-links" onClick={()=>{navigate('/addCourses', {state:{ username, matric_num }})}}>Add Course</button></li>
         <li><button style={{marginRight:'29.5%'}} className="sidebar-links" onClick={()=>{navigate('/qrCodeScanner', {state:{ username, matric_num }})}}>QRCode Scanner</button></li> 
-        <li><a style={{marginLeft:'31.5%'}} className="sidebar_content" href="/">Log Out</a></li>    
+        <li><a style={{marginLeft:'31.5%'}} className="sidebar_content" href="/signIn">Log Out</a></li>    
       </ul>
       <FaCopyright style={{position:"absolute",bottom:5,left:5, fontSize:30,color:'#2a2aaf'}}/>
     </div>
@@ -93,7 +93,8 @@ if (loading) {
       const courseData = attendance.filter(data => data.course_id === courseId);
 
       return (
-        <table className="attendanceTable" key={courseId}>
+        <div>
+        <table className={`attendanceTable ${attendance.length > 4 ? "scrollable" : ""}`} key={courseId}>
           <caption>{courseData[0].course_name} - {courseData[0].course_code}</caption>
           <thead>
             <tr>
@@ -112,6 +113,7 @@ if (loading) {
             ))}
           </tbody>
         </table>
+        </div>
       );
     })}
   {error? <div style={{color: "red"}}>{error.message}</div>: <p>{attendance.length === 0 && 'No attendance data yet'}</p>}

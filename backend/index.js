@@ -1,4 +1,3 @@
-
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -14,6 +13,7 @@ app.use(cors({
      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true
 }));
+
 
 app.get('/',(req,res)=>{
     db.query('SELECT * FROM users', (err, result) => {
@@ -31,7 +31,7 @@ const db = mysql.createConnection({
   host:'localhost',
   user:'busari007',
   password:'obey4show',
-  database:'test'
+  database:'attendance_system'
 });
 
 db.connect((err)=>{
@@ -148,8 +148,8 @@ const { lect_username, lect_password } = req.body;
 
 //query for creating courses
 app.post('/courses', (req, res) => {
-  const newCourse = req.body;
-  const course_code = newCourse.course_code;
+  const { course_code, session, department, course_name, lect_id } = req.body;
+  const newCourse = {course_code, session, department, course_name, lect_id};
 
   // Check if course already exists for the matric_num or lect_id
   db.query(
@@ -655,4 +655,4 @@ console.log('Server started');
 // REPAIR TABLE mysql.user
 
 //After getting access denied error
-//GRANT ALL PRIVILEGES ON test.* TO 'busari007'@'localhost' IDENTIFIED BY 'obey4show';
+//GRANT ALL PRIVILEGES ON 'db name'.* TO 'busari007'@'localhost' IDENTIFIED BY 'obey4show';
