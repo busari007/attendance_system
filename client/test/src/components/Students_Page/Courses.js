@@ -6,7 +6,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 function Courses(props){
     const location = useLocation();
-    const { username, matric_num } = location.state;  // Recieves the username and matric number 
+    // Retrieve username and matric_num from local storage
+    const storedUsername = localStorage.getItem('username');
+    const storedMatricNum = localStorage.getItem('matric_num');
+    const { username = storedUsername || "Guest", matric_num = storedMatricNum || "" } = location.state || {};
     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [isOpen, setOpen] = useState(false);
@@ -27,7 +30,7 @@ function Courses(props){
       
       function handleDelete(course_name,course_code,course_id){
         console.log(course_name,course_code,course_id);
-         Axios.post(`http://${window.location.hostname}:5000/deleteCourses`,{
+         Axios.post(`https://${window.location.hostname}:5000/deleteCourses`,{
             course_code:course_code,
             course_name:course_name,
             course_id:course_id
@@ -50,7 +53,10 @@ function Courses(props){
       }
 
     useEffect(() => {
-        Axios.post(`http://${window.location.hostname}:5000/getCourses`,{
+    // Save username and matric_num to local storage
+     localStorage.setItem('username', username);
+     localStorage.setItem('matric_num', matric_num);
+        Axios.post(`https://${window.location.hostname}:5000/getCourses`,{
           matric_num: matric_num   //uses the matric number to filter the courses table to send only courses with the matric numbers value(its a foreign key in the db)
         })
         .then((response) => {
@@ -79,7 +85,7 @@ function Courses(props){
         return () => {
           document.removeEventListener('mousedown', handleOutsideClick);
         };
-      }, [matric_num]);
+      }, [matric_num,username]);
 
       if (loading) {
         return <div><p style={{marginTop:"19%",fontSize:"40px",fontWeight:'bolder', textAlign:"center"}}>Loading...</p></div>;

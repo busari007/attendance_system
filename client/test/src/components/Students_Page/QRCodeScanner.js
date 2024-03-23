@@ -7,7 +7,10 @@ import Axios from 'axios';
 
 function QRCodeScanner(props) {
     const location = useLocation();
-    const { username, matric_num } = location.state;
+     // Retrieve username and matric_num from local storage
+     const storedUsername = localStorage.getItem('username');
+     const storedMatricNum = localStorage.getItem('matric_num');
+     const { username = storedUsername || "Guest", matric_num = storedMatricNum || "" } = location.state || {};
     const navigate = useNavigate();
     const delay = 2000;
     const previewStyle = {
@@ -25,7 +28,7 @@ function QRCodeScanner(props) {
     const [lect_latitude, setLectLatitude] = useState(null);
     const [lect_longitude, setLectLongitude] = useState(null);
     const [isWithinBoundary, setIsWithinBoundary] = useState();
-    const classroomWidth = 20; // Specify the width of the classroom boundary in meters
+    const classroomWidth = 200; // Specify the width of the classroom boundary in meters
     const [distance, setDisance] = useState();
     const [loading, setLoading] = useState(true);
 
@@ -42,12 +45,12 @@ function QRCodeScanner(props) {
             if (dataString) {
                 setResult(data);
     
-                Axios.post(`http://${window.location.hostname}:5000/getCourseId`, {
+                Axios.post(`https://${window.location.hostname}:5000/getCourseId`, {
                     course_code: course_code,
                     matric_num: matric_num
                 }).then((res) => {
                     const { course_id } = res.data[0];
-                    Axios.post(`http://${window.location.hostname}:5000/getLocation`,{
+                    Axios.post(`https://${window.location.hostname}:5000/getLocation`,{
                         lect_id: lect_id,
                     }).then((res) => {
                         const { latitude, longitude } = res.data[0];
@@ -61,7 +64,7 @@ function QRCodeScanner(props) {
                            if (distance <= classroomWidth) {
                                 setIsWithinBoundary(true);
                                 if (course_id !== "") {
-                                    Axios.post(`http://${window.location.hostname}:5000/attendance`, {
+                                    Axios.post(`https://${window.location.hostname}:5000/attendance`, {
                                         matric_num: matric_num,
                                         course_id: course_id,
                                         Status: 1
@@ -127,11 +130,15 @@ function QRCodeScanner(props) {
     };
 
     useEffect(() => {
+        
+    // Save username and matric_num to local storage
+     localStorage.setItem('username', username);
+     localStorage.setItem('matric_num', matric_num);
         document.addEventListener('mousedown', handleOutsideClick);
         return () => {
             document.removeEventListener('mousedown', handleOutsideClick);
         };
-    }, []);
+    }, [username,matric_num]);
 
     useEffect(() => {
         if ("geolocation" in navigator) {

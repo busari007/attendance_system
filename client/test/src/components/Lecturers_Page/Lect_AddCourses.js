@@ -6,7 +6,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const LectAddCourses = () => {
   const location = useLocation();
-  const { lect_username, lect_id } = location.state;
+  // Retrieve username and matric_num from local storage
+  const storedUsername = localStorage.getItem('lect_username');
+  const storedId = localStorage.getItem('lect_id');
+  const { lect_username = storedUsername || "Guest", lect_id = storedId || "" } = location.state || {};
   const navigate = useNavigate();
   const [isOpen, setOpen] = useState(false);
   const sidebarRef = useRef(null);
@@ -45,8 +48,10 @@ const LectAddCourses = () => {
   }, [state]);
 
   useEffect(() => {
+    localStorage.setItem('lect_username', lect_username);
+    localStorage.setItem('lect_id', lect_id);
     setFormValid(validateForm());
-  }, [validateForm]);
+  }, [validateForm,lect_username,lect_id]);
 
   const handleSubmit = useCallback((e) => {
     console.log(state);
@@ -54,7 +59,7 @@ const LectAddCourses = () => {
     if (!validateForm()) {
       return; // Do not proceed if form is invalid
     }
-    Axios.post(`http://${window.location.hostname}:5000/courses`, {
+    Axios.post(`https://${window.location.hostname}:5000/courses`, {
       session: state.session,
       course_name: state.course_name,
       course_code: state.course_code,

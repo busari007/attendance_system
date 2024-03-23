@@ -8,7 +8,9 @@ import "../Styles/Home.css";
 function LectHome() {
   const location = useLocation();
   const [lect_id, setLectId] = useState();
-  const { lect_username } = location.state;
+  // Retrieve username and matric_num from local storage
+  const storedUsername = localStorage.getItem('lect_username');
+  const { lect_username = storedUsername || "Guest"} = location.state || {};
   const navigate = useNavigate();
   const [isOpen, setOpen] = useState(false);
   const sidebarRef = useRef(null);
@@ -27,14 +29,15 @@ function LectHome() {
   };
 
   useEffect(() => {
-    Axios.post(`http://${window.location.hostname}:5000/lectId`, {  //http://${window.location.hostname}:5000 for local server
+    localStorage.setItem('lect_username', lect_username);
+    Axios.post(`https://${window.location.hostname}:5000/lectId`, {  //http://${window.location.hostname}:5000 for local server
       lect_username: lect_username,
     })
       .then(({ data: { lect_id, courseCodes } }) => {
         setLectId(lect_id);
         if(courseCodes[0] !== null){
         Axios.post(
-          `http://${window.location.hostname}:5000/getStudentsAttendance`,
+          `https://${window.location.hostname}:5000/getStudentsAttendance`,
           {
             course_code: courseCodes,
           }
@@ -78,7 +81,7 @@ function LectHome() {
 
   function handleDelete(attendanceID,course_id){
     console.log("Its attendanceID is ", attendanceID, " and its course_id is", course_id);
-     Axios.post(`http://${window.location.hostname}:5000/deleteRecord`,{
+     Axios.post(`https://${window.location.hostname}:5000/deleteRecord`,{
         attendanceID: attendanceID,
         course_id: course_id
      }).then((result)=>{
@@ -103,7 +106,7 @@ function LectHome() {
     updatedAttendance[rowIndex][columnIndex] = newValue;
     setAttendance(updatedAttendance);
     console.log("The data cells attendanceID is " + attendanceID);
-    Axios.post(`http://${window.location.hostname}:5000/updateAttendance`, {
+    Axios.post(`https://${window.location.hostname}:5000/updateAttendance`, {
       attendanceID: attendanceID,
       newStatus: newValue
     })

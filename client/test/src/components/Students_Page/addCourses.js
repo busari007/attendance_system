@@ -6,7 +6,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const AddCourses = (props)=> {
    const location = useLocation();
-   const { username, matric_num } = location.state;
+   // Retrieve username and matric_num from local storage
+   const storedUsername = localStorage.getItem('username');
+   const storedMatricNum = localStorage.getItem('matric_num');
+   const { username = storedUsername || "Guest", matric_num = storedMatricNum || "" } = location.state || {};
    const navigate = useNavigate();
    const [isOpen, setOpen] = useState(false);
    const sidebarRef = useRef(null); 
@@ -27,7 +30,7 @@ const AddCourses = (props)=> {
     const courseName = parts.join(" "); // Join the remaining parts as the course name
 
     console.log(courseName, courseCode, courseID);
-    Axios.post(`http://${window.location.hostname}:5000/studentCourses`,{
+    Axios.post(`https://${window.location.hostname}:5000/studentCourses`,{
       course_id: courseID || courses[0].course_id,
       matric_num: matric_num  //gotten from ./home
     }).then((result)=>{
@@ -71,7 +74,10 @@ const AddCourses = (props)=> {
       
 
     useEffect(() => {
-        Axios.get(`http://${window.location.hostname}:5000/courses`).then((res)=>{
+      // Save username and matric_num to local storage
+       localStorage.setItem('username', username);
+       localStorage.setItem('matric_num', matric_num);
+        Axios.get(`https://${window.location.hostname}:5000/courses`).then((res)=>{
            console.log(res);
            setCourses(res.data);
            console.log(courses);
@@ -90,7 +96,7 @@ const AddCourses = (props)=> {
         return () => {
           document.removeEventListener('mousedown', handleOutsideClick);
         };
-      }, []);
+      }, [matric_num,username]);
 
    return(
     <div>

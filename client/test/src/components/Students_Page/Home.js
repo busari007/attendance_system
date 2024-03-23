@@ -8,7 +8,10 @@ import Axios  from "axios";
 
 function Home (){
   const location = useLocation();
-  const { username, matric_num } = location.state;  //To pass username and matric num into components on different routes (React router v6)
+  // Retrieve username and matric_num from local storage
+  const storedUsername = localStorage.getItem('username');
+  const storedMatricNum = localStorage.getItem('matric_num');
+  const { username = storedUsername || "Guest", matric_num = storedMatricNum || "" } = location.state || {};
   const navigate = useNavigate();  //To navigate through routes
  const [isOpen, setOpen] = useState(false); //To set slidebar to appear or disappear
  const sidebarRef = useRef(null); // A ref is a property that can hold a reference to a DOM element or a React component instance
@@ -27,8 +30,11 @@ function Home (){
 };
 
 useEffect(() => {  //To handle the click event that closes the sidebar outside the sidebar
+    // Save username and matric_num to local storage
+    localStorage.setItem('username', username);
+    localStorage.setItem('matric_num', matric_num);
   console.log(matric_num);
-  Axios.post(`http://${window.location.hostname}:5000/getAttendance`,{
+  Axios.post(`https://${window.location.hostname}:5000/getAttendance`,{
     matric_num: matric_num
   }).then((res)=>{
       setAttendance(res.data.records);
@@ -58,7 +64,7 @@ useEffect(() => {  //To handle the click event that closes the sidebar outside t
   return () => {
     document.removeEventListener('mousedown', handleOutsideClick);
   };
-}, [matric_num]);
+}, [matric_num,username]);
 
 const uniqueCourses = Array.from(new Set(attendance.map(data => data.course_id))); //This extracts unique course IDs from the attendance data. The Set object is used to eliminate duplicate course IDs, and then Array.from is used to convert the set back into an array.
 
@@ -94,7 +100,7 @@ if (loading) {
 
       return (
         <div>
-        <table className={`attendanceTable ${attendance.length > 4 ? "scrollable" : ""}`} key={courseId}>
+        <table className={`attendanceTable ${attendance.length > 4 ? "scrollable" : ""}`} key={courseData[0].course_id}>
           <caption>{courseData[0].course_name} - {courseData[0].course_code}</caption>
           <thead>
             <tr>

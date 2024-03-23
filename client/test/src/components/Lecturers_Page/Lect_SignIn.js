@@ -54,7 +54,7 @@ function LectSignIn(props) {
   const handleSubmit = (e) => {
     console.log(window.location.hostname);
     e.preventDefault();
-    Axios.post(`http://${window.location.hostname}:5000/lectLogIn`, { //http://localhost:5000
+    Axios.post(`https://${window.location.hostname}:5000/lectLogIn`, { //http://localhost:5000
       lect_username: state.lect_username,
       lect_password: state.lect_password
     }).then((response) => {
@@ -97,7 +97,7 @@ function LectSignIn(props) {
         </form>   
         <a className="links" href="/changePassword" style={{position:"absolute",bottom:10,right:10,textDecoration:"none"}}>Change Password</a>
       </div>
-      <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/">Student?</a></p>
+      <p style={{position:'absolute', bottom:0, right:0}}>A <a style={{textDecoration:'none'}} className="links" href="/signIn">Student?</a></p>
      </div>
   );
 }

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import logo from "./Pictures/babcock-logo.gif";
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import { FaCheck } from 'react-icons/fa';
 
 function SignIn(props) {
     const navigate = useNavigate();
@@ -48,7 +47,7 @@ function SignIn(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    Axios.post(`http://${window.location.hostname}:5000/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
+    Axios.post(`https://${window.location.hostname}:5000/logIn`, { //https://vercel-backend-test-azure.vercel.app/ for hosted website  /${window.location.hostname}:5000 for local one
       matric_num: state.matric_num,
       password: state.password
     }).then((response) => {

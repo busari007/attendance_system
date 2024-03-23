@@ -6,7 +6,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 function LectCourses(props){
     const location = useLocation();
-    const { lect_username, lect_id } = location.state;  // Recieves the username and matric number 
+    // Retrieve username and matric_num from local storage
+    const storedUsername = localStorage.getItem('lect_username');
+    const storedId = localStorage.getItem('lect_id');
+    const { lect_username = storedUsername || "Guest", lect_id = storedId || "" } = location.state || {};
     const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
     const [isOpen, setOpen] = useState(false);
@@ -27,7 +30,7 @@ function LectCourses(props){
       
     function handleDelete(course_name,course_code,course_id){
       console.log(course_name,course_code,course_id);
-       Axios.post(`http://${window.location.hostname}:5000/deleteLectCourses`,{
+       Axios.post(`https://${window.location.hostname}:5000/deleteLectCourses`,{
           course_id:course_id,
           course_code: course_code,
           course_name: course_name 
@@ -35,7 +38,7 @@ function LectCourses(props){
           console.log(result);
           alert(`${course_name} successfully deleted`);
           setCourses(prevCourses => prevCourses.filter(course => course.course_id !== course_id));
-          Axios.post(`http://${window.location.hostname}:5000/deleteCourses`,{
+          Axios.post(`https://${window.location.hostname}:5000/deleteCourses`,{
             course_id: course_id
           }).then((res)=>{ console.log("Related students data deleted")}).catch((err)=>{console.log(err); console.log("Students' data could'nt be deleted")});
        }).catch((error)=>{
@@ -50,7 +53,9 @@ function LectCourses(props){
 
       
     useEffect(() => {
-        Axios.post(`http://${window.location.hostname}:5000/getLectCourses`,{
+      localStorage.setItem('lect_username', lect_username);
+      localStorage.setItem('lect_id', lect_id);
+        Axios.post(`https://${window.location.hostname}:5000/getLectCourses`,{
           lect_id: lect_id  //uses the matric number to filter the courses table to send only courses with the matric numbers value(its a foreign key in the db)
         })
         .then((response) => {
@@ -81,7 +86,7 @@ function LectCourses(props){
         return () => {
           document.removeEventListener('mousedown', handleOutsideClick);
         };
-      }, [lect_id]);
+      }, [lect_id,lect_username]);
 
       if (loading) {
         return <div><p style={{marginTop:"19%",fontSize:"40px",fontWeight:'bolder', textAlign:"center"}}>Loading...</p></div>;

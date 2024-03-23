@@ -11,7 +11,10 @@ const QrCode = () => {
   const [isOpen, setOpen] = useState(false);
   const sidebarRef = useRef(null);
   const location = useLocation();
-  const { lect_username, lect_id } = location.state;
+  // Retrieve username and matric_num from local storage
+  const storedUsername = localStorage.getItem('lect_username');
+  const storedId = localStorage.getItem('lect_id');
+  const { lect_username = storedUsername || "Guest", lect_id = storedId || "" } = location.state || {};
   const [courses, setCourses] = useState([]);
   const [courseID, setCourseID] = useState([]);
   const [data, setData] = useState([]);
@@ -19,7 +22,7 @@ const QrCode = () => {
   const [isCodeGenerated, setIsCodeGenerated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [attendanceWindow, setAttendanceWindow] = useState(6);
+  const [attendanceWindow, setAttendanceWindow] = useState(30);
   const [timerId, setTimerId] = useState(null);
 
   function handleChange(e) {
@@ -53,7 +56,7 @@ const QrCode = () => {
       const id = setTimeout(() => {
         setIsCodeGenerated(false);
         console.log(courseID);
-        Axios.post(`http://${window.location.hostname}:5000/absent`,{
+        Axios.post(`https://${window.location.hostname}:5000/absent`,{
           course_id: courseID
         }).then((res)=>{
           console.log(res);
@@ -65,9 +68,12 @@ const QrCode = () => {
           }
         });
         alert("Attendance Window Closed");
-      }, 6000); // Timer set to 6 seconds
+      }, 30000); // Timer set to 6 seconds
   
        setTimerId(id);
+    } else {
+      // Clear the timeout if the QR code is generated
+      clearTimeout(timerId);
     }
   }
 
@@ -82,11 +88,13 @@ const QrCode = () => {
   };
 
   useEffect(() => {
+    localStorage.setItem('lect_username', lect_username);
+    localStorage.setItem('lect_id', lect_id);
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(function(position) {
         const { latitude, longitude } = position.coords;
         console.log("Latitude:", latitude, "Longitude:", longitude);
-        Axios.post(`http://${window.location.hostname}:5000/updateLocation`,{
+        Axios.post(`https://${window.location.hostname}:5000/updateLocation`,{
           latitude: latitude,
           longitude: longitude,
           lect_id: lect_id
@@ -99,10 +107,10 @@ const QrCode = () => {
     } else {
       console.log("Geolocation is not supported by this browser.");
     }
-  },[]);
+  },[lect_username,lect_id]);
 
   useEffect(() => {
-    Axios.post(`http://${window.location.hostname}:5000/getLectCourses`, {
+    Axios.post(`https://${window.location.hostname}:5000/getLectCourses`, {
       lect_id: lect_id
     })
     .then((response) => {
@@ -207,3 +215,4 @@ const QrCode = () => {
 }
 
 export default QrCode;
+

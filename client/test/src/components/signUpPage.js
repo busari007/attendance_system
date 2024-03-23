@@ -3,7 +3,6 @@ import logo from "./Pictures/babcock-logo.gif";
 import React, { useEffect, useState } from "react";
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import { FaCheck } from 'react-icons/fa';
 
 function SignUp(props) {
   const navigate = useNavigate();
@@ -82,7 +81,7 @@ function SignUp(props) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    Axios.post(`http://${window.location.hostname}:5000/register`, {
+    Axios.post(`https://${window.location.hostname}:5000/register`, {
       username: state.username,
       email: state.email,
       password: state.password,

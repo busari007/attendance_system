@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Axios from 'axios';
-import { FaCheck } from 'react-icons/fa';
 
 function PasswordChanged() {
   const location = useLocation();
@@ -33,7 +32,7 @@ function PasswordChanged() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission behavior
-    Axios.post(`http://${window.location.hostname}:5000/changedPassword`,{
+    Axios.post(`https://${window.location.hostname}:5000/changedPassword`,{
       data:data,
       password:password
     }).then((res)=>{

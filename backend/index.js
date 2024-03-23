@@ -5,6 +5,8 @@ const PORT = process.env.PORT || 5000;
 const members = require('./members');
 const uuid = require('uuid');
 const mysql = require('mysql');
+const https = require('https');
+const fs = require('fs');
 
 app.use(express.json()); 
 app.use(express.urlencoded({extended:false}));
@@ -13,6 +15,12 @@ app.use(cors({
      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true
 }));
+
+const options = {
+  ca: fs.readFileSync('../https_setup/ca.crt'),
+  cert: fs.readFileSync('../https_setup/cert.crt'),
+  key: fs.readFileSync('../https_setup/cert.key')
+};
 
 
 app.get('/',(req,res)=>{
@@ -377,34 +385,34 @@ db.query('SELECT courses.course_name, course_code, course_id FROM courses WHERE 
 });
 });
 
-app.post('/attendance', async (req, res) => { // to take attendance
-  try {
-    const { matric_num, course_id, Status } = req.body;
+app.post('/attendance', async (req, res) => {
+  const { matric_num, course_id, Status } = req.body;
+  
+  db.query('SELECT lect_id FROM courses WHERE course_id = ?', [course_id], (err, result) => {
+      if (err) {
+          console.log(err);
+          res.status(404).json({ message: "No such course found" });
+      } else {
+          console.log(result);
+          const lect_id = result[0].lect_id;
 
-    // Fetch lect_id from courses table based on course_id
-    const courseQuery = 'SELECT lect_id FROM courses WHERE course_id = ?';
-    const [courseRow] = await db.query(courseQuery, [course_id]);
-
-    if (!courseRow || !courseRow.length) {
-      return res.status(404).json({ success: false, message: 'Course not found' });
-    }
-
-    const lect_id = courseRow[0].lect_id;
-
-    // Insert data into the Attendance table with lect_id
-    const insertQuery = 'INSERT INTO attendance (matric_num, course_id, lect_id, Status) VALUES (?, ?, ?, ?)';
-    await db.query(insertQuery, [matric_num, course_id, lect_id, Status]);
-
-    console.log('Attendance record inserted successfully.');
-    res.json({ message: 'Attendance record inserted successfully!' });
-  } catch (error) {
-    console.error('Error inserting attendance record:', error);
-    res.status(500).send('Internal Server Error');
-  }
+          db.query('INSERT INTO attendance (matric_num, course_id, lect_id, Status) VALUES (?, ?, ?, ?)',
+              [matric_num, course_id, lect_id, Status], (error, insertResult) => {
+                  if (error) {
+                      console.log(error);
+                      res.status(500).json({ message: "Error inserting attendance record" });
+                  } else {
+                      console.log(insertResult);
+                      res.json({ message: "Attendance inputted successfully" });
+                  }
+              });
+      }
+  });
 });
 
+
 // To get attendance records
-      app.post('/getAttendance', (req, res) => {
+app.post('/getAttendance', (req, res) => {
         const { matric_num } = req.body;
       
         const query = `
@@ -645,8 +653,8 @@ db.query('SELECT latitude,longitude FROM lecturers where lect_id = ?', [lect_id]
 });
 });
 
-app.listen(5000, () => {
-console.log('Server started');
+https.createServer(options, app).listen(5000, () => {
+  console.log('Server is running on port 5000 over HTTPS');
 });
 
 

@@ -47,7 +47,7 @@ function ChangePassword() {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission behavior
-    Axios.post(`http://${window.location.hostname}:5000/passwordChange`, {
+    Axios.post(`https://${window.location.hostname}:5000/passwordChange`, {
       matric_num: matricNum,
       password: password
     }).then((res) => {
