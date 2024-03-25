@@ -16,12 +16,11 @@ app.use(cors({
     credentials: true
 }));
 
-const options = {
+const options = {    //secure server setup
   ca: fs.readFileSync('../https_setup/ca.crt'),
   cert: fs.readFileSync('../https_setup/cert.crt'),
   key: fs.readFileSync('../https_setup/cert.key')
 };
-
 
 app.get('/',(req,res)=>{
     db.query('SELECT * FROM users', (err, result) => {
@@ -189,20 +188,21 @@ app.post('/courses', (req, res) => {
 
 //to create courses for students
 app.post('/studentCourses', (req, res) => {
-  const { course_id } = req.body
+  const { course_id, matric_num } = req.body;
   const newCourse = req.body;
 
-  // Check if course already exists for the matric_num 
+  // Check if course already exists for the course_id or matric_num
   db.query(
-    'SELECT * FROM studentcourses WHERE course_id = ?',
-    [course_id],
+    'SELECT * FROM studentcourses WHERE course_id = ? AND matric_num = ?',
+    [course_id, matric_num],
     (err, existingCourses) => {
       if (err) {
         console.error('Error checking existing courses:', err);
         res.status(500).send('Error checking existing courses');
       } else {
         if (existingCourses && existingCourses.length > 0) {
-          res.status(409).send('Course already exists for the matric_num');
+          res.status(409).send('Course already exists for the course_id or matric_num');
+          console.log(existingCourses);
         } else {
           // No existing courses found, proceed with insertion
           db.query('INSERT INTO studentcourses SET ?', newCourse, (insertErr, result) => {
@@ -387,67 +387,84 @@ db.query('SELECT courses.course_name, course_code, course_id FROM courses WHERE 
 
 app.post('/attendance', async (req, res) => {
   const { matric_num, course_id, Status } = req.body;
-  
-  db.query('SELECT lect_id FROM courses WHERE course_id = ?', [course_id], (err, result) => {
-      if (err) {
-          console.log(err);
-          res.status(404).json({ message: "No such course found" });
-      } else {
-          console.log(result);
-          const lect_id = result[0].lect_id;
 
-          db.query('INSERT INTO attendance (matric_num, course_id, lect_id, Status) VALUES (?, ?, ?, ?)',
+  // Check if the matric_num has the course_id tied to it in the studentcourses table
+  db.query('SELECT * FROM studentcourses WHERE matric_num = ? AND course_id = ?', [matric_num, course_id], (err, result) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ message: "Error checking student's course" });
+    } else {
+      if (result.length === 0) {
+        // If no matching record found, return error
+        res.status(404).json({ message: "No such course found for the provided student" });
+      } else {
+        // Matching record found, proceed with inserting attendance
+        db.query('SELECT lect_id FROM courses WHERE course_id = ?', [course_id], (err, result) => {
+          if (err) {
+            console.log(err);
+            res.status(404).json({ message: "No such course found" });
+          } else {
+            console.log(result);
+            const lect_id = result[0].lect_id;
+
+            db.query('INSERT INTO attendance (matric_num, course_id, lect_id, Status) VALUES (?, ?, ?, ?)',
               [matric_num, course_id, lect_id, Status], (error, insertResult) => {
-                  if (error) {
-                      console.log(error);
-                      res.status(500).json({ message: "Error inserting attendance record" });
-                  } else {
-                      console.log(insertResult);
-                      res.json({ message: "Attendance inputted successfully" });
-                  }
+                if (error) {
+                  console.log(error);
+                  res.status(500).json({ message: "Error inserting attendance record" });
+                } else {
+                  console.log(insertResult);
+                  res.json({ message: "Attendance inputted successfully" });
+                }
               });
+          }
+        });
       }
+    }
   });
 });
 
 
 // To get attendance records
 app.post('/getAttendance', (req, res) => {
-        const { matric_num } = req.body;
-      
-        const query = `
-            SELECT
-                a.attendanceID,
-                a.matric_num,
-                a.course_id,
-                DATE_FORMAT(a.dateTaken, '%d-%m-%Y') AS dateTaken,
-                TIME_FORMAT(a.timeTaken, '%H:%i') AS timeTaken,
-                a.Status,
-                c.course_code,
-                c.course_name
-            FROM
-                attendance a
-            INNER JOIN
-                studentcourses sc ON a.course_id = sc.course_id
-            INNER JOIN
-                courses c ON a.course_id = c.course_id
-            WHERE
-                sc.matric_num = ?;
-        `;
-      
-        db.query(query, [matric_num], (err, result) => {
-            if (err) {
-                console.error("Query Error", err);
-                return res.status(500).json({ success: false, message: 'Internal server error' });
-            }
-      
-            if (result.length > 0) {
-                // User has attendance records, return the records
-                return res.json({ records: result, success: true });
-            }
+  const { matric_num } = req.body;
 
-      // Check if the user has registered courses directly
-      const registeredCoursesQuery = 'SELECT * FROM courses WHERE course_id IN (SELECT course_id FROM studentcourses WHERE matric_num = ?)';
+  const query = `
+  SELECT 
+    a.attendanceID,
+    a.matric_num,
+    a.course_id,
+    DATE_FORMAT(a.dateTaken, '%d-%m-%Y') AS dateTaken,
+    TIME_FORMAT(a.timeTaken, '%H:%i') AS timeTaken,
+    a.Status,
+    c.course_code,
+    c.course_name
+FROM
+    attendance a
+INNER JOIN
+    courses c ON a.course_id = c.course_id
+WHERE
+    a.matric_num = ?
+  `;
+
+  db.query(query, [matric_num], (err, result) => {
+      if (err) {
+          console.error("Query Error", err);
+          return res.status(500).json({ success: false, message: 'Internal server error' });
+      }
+
+      if (result.length > 0) {
+          // User has attendance records, return the records
+          return res.json({ records: result, success: true });
+      }
+
+      // If no attendance records found for the specified matric_num, 
+      // check if the user has registered courses directly
+      const registeredCoursesQuery = `
+          SELECT * 
+          FROM courses 
+          WHERE course_id IN (SELECT course_id FROM studentcourses WHERE matric_num = ?)
+      `;
       db.query(registeredCoursesQuery, [matric_num], (coursesErr, coursesResult) => {
           if (coursesErr) {
               console.error("Courses Query Error", coursesErr);
@@ -465,12 +482,13 @@ app.post('/getAttendance', (req, res) => {
   });
 });
 
+
 // To get attendance records
 app.post('/getStudentsAttendance', (req, res) => {
 const { course_code } = req.body;
 
 const query = `
-SELECT c.course_name, 
+SELECT DISTINCT c.course_name, 
        c.course_code, 
        c.course_id,
        a.matric_num,
@@ -501,17 +519,22 @@ db.query(query, [course_code], (err, result) => {
 
 //To get the course_id for recording attendance
 app.post('/getCourseId', (req, res) => {
-const { matric_num } = req.body;
-db.query('SELECT course_id FROM studentcourses WHERE matric_num = ?'
-, [ matric_num],(err, result) => {
-  if (err) {
-    console.error('Error executing the SELECT query:', err);
-    res.status(500).send('Error retrieving data from the database');
-  } else {
-    res.json(result);
-  }
+  const { matric_num, lect_id, course_code } = req.body;
+  
+  // Query to retrieve the course_id based on matric_num, lect_id, and course_code
+  db.query('SELECT sc.course_id FROM studentcourses sc INNER JOIN courses c ON sc.course_id = c.course_id WHERE sc.matric_num = ? AND c.lect_id = ? AND c.course_code = ?',
+    [matric_num, lect_id, course_code],
+    (err, result) => {
+      if (err) {
+        console.error('Error executing the SELECT query:', err);
+        res.status(500).send('Error retrieving data from the database');
+        res.status(404).send('Student hasnt registered the course');
+      } else {
+        res.json(result);
+      }
+    });
 });
-});
+
 
 app.post('/absent', async (req, res) => {
     const { course_id } = req.body;
@@ -533,6 +556,7 @@ app.post('/absent', async (req, res) => {
         }
     
         if (result.length > 0) {
+          console.log("The result is "+result)
           return res.json({ message: 'Attendance updated successfully' });
         } else {
           db.query(
@@ -550,6 +574,7 @@ app.post('/absent', async (req, res) => {
                 return res.status(500).send('Error inserting attendance');
               }
               res.json(insertResult);
+              console.log("The insertResult is "+insertResult);
             }
           );
         }

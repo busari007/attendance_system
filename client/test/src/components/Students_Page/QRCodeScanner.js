@@ -12,7 +12,7 @@ function QRCodeScanner(props) {
      const storedMatricNum = localStorage.getItem('matric_num');
      const { username = storedUsername || "Guest", matric_num = storedMatricNum || "" } = location.state || {};
     const navigate = useNavigate();
-    const delay = 2000;
+    const delay = 700;
     const previewStyle = {
         height: 320,
         width: 320,
@@ -47,9 +47,10 @@ function QRCodeScanner(props) {
     
                 Axios.post(`https://${window.location.hostname}:5000/getCourseId`, {
                     course_code: course_code,
-                    matric_num: matric_num
+                    matric_num: matric_num,
+                    lect_id:lect_id
                 }).then((res) => {
-                    const { course_id } = res.data[0];
+                    const { course_id } = res.data[0] || "";
                     Axios.post(`https://${window.location.hostname}:5000/getLocation`,{
                         lect_id: lect_id,
                     }).then((res) => {
@@ -78,7 +79,9 @@ function QRCodeScanner(props) {
                                         alert("Internal Server Error");
                                     }else if(err.message === "Network Error"){
                                       alert("Server's Offline");
-                                  }
+                                    }else if(err.response.data.message === "No such course found for the provided student"){
+                                        alert("You arent taking the course");
+                                    }
                                     });
                                     alert("you are within boundary");
                                 } else {
@@ -106,11 +109,14 @@ function QRCodeScanner(props) {
                         alert("Internal Server Error");
                     }else if(err.message === "Network Error"){
                       alert("Server's Offline");
+                  }else if(err.message === 'Student hasnt registered the course'){
+                     alert('You havent registered the course');
                   }
                 });
             }
         } catch (error) {
             console.error("Error occurred:", error);
+            alert("error: " + error);
             // Handle the error here, such as displaying a user-friendly message or logging it
         }
     };

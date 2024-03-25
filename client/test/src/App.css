@@ -7,6 +7,43 @@
   pointer-events: none;
 }
 
+#landingPageLink{
+  font-size: 29px;
+  margin-left:13.8vw;
+}
+
+.landingPageText{
+  margin-top: 35vh;
+   text-align:center;
+   margin-bottom: 12%;
+}
+
+#landingPageImage{
+  width:60%;
+  height:100vh;
+  object-fit:cover;
+}
+
+@media (max-width: 720px) {
+
+  #landingPageImage{
+       width: 50%;
+  }
+
+.landingPageText{
+  margin-top: 20vh;
+    font-size: x-large;
+    margin-bottom: 30%;
+}
+
+#landingPageLink{
+  font-size: medium;
+  margin-left:13vw;
+}
+
+}
+
+
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;

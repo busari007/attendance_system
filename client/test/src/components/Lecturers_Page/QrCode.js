@@ -68,7 +68,7 @@ const QrCode = () => {
           }
         });
         alert("Attendance Window Closed");
-      }, 30000); // Timer set to 6 seconds
+      }, 30000); // Timer set to 30 seconds
   
        setTimerId(id);
     } else {
@@ -215,4 +215,3 @@ const QrCode = () => {
 }
 
 export default QrCode;
-

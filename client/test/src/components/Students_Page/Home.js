@@ -118,7 +118,7 @@ if (loading) {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> 
         </div>
       );
     })}

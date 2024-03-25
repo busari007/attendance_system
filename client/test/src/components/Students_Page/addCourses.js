@@ -125,7 +125,7 @@ const AddCourses = (props)=> {
     <div style={{marginBottom:'2%', marginTop:'2.5%'}} className="course_container">
       <label className="course_container_header">Enter your Session</label>
       <div className="course_container_content">
-      <select onChange={(e) => handleChange(e)} id='session'>
+      <select className="addCourses" onChange={(e) => handleChange(e)} id='session'>
       {courses && courses.map((course) => (
             <option key={course.course_id || 1} value={`${course.session || ''}`}>
              {course.session}
@@ -137,7 +137,7 @@ const AddCourses = (props)=> {
     <div style={{marginBottom:'2%'}} className="course_container">
     <label className="course_container_header">Enter your Department</label>
       <div className="course_container_content">
-      <select onChange={(e) => handleChange(e)} id='department'>
+      <select className="addCourses" onChange={(e) => handleChange(e)} id='department'>
       {courses && courses.map((course) => (
             <option key={course.course_id || 1} value={`${course.department || ''}`}>
              {course.department}
@@ -149,7 +149,7 @@ const AddCourses = (props)=> {
     <div style={{marginTop:'3%'}} className="course_container">
       <label className="course_container_header">Course Code and Code</label>
       <div className="course_container_content">
-      <select onChange={(e) => handleChange(e)} id='course_id'>
+      <select className="addCourses" onChange={(e) => handleChange(e)} id='course_id'>
       {courses && courses.map((course) => (
             <option key={course.course_id || 1} value={`${course.course_code || ''} ${course.course_name || ''} ${course.course_id || ''}`}>
              {course.course_name} {course.course_code}

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Axios from 'axios';
 import { useNavigate } from "react-router-dom";
-import { FaCheck } from 'react-icons/fa';
 
 function ChangePassword() {
   const [matricNum, setMatricNum] = useState("");
@@ -26,8 +25,8 @@ function ChangePassword() {
       setMatricNumError("Enter your Matriculation Number/ Application Id");
       return false;
     }
-    const isValid = value.match(/^\d{2}\/\d{4}$/) || value.match(/^\d{6}$/) || value.match(/\b[a-zA-Z]+[Bb]\b/);
-    setMatricNumError(isValid ? "" : "Improper matriculation format");
+    const isValid = value.match(/^\d{2}\/\d{4}$/) || value.match(/^\d{6}$/) || value.match(/\b[a-zA-Z]{6,}\b/);
+    setMatricNumError(isValid ? "" : "Improper format");
     return isValid;
   };
 
@@ -53,8 +52,13 @@ function ChangePassword() {
     }).then((res) => {
       navigate('/passwordChanged', { state: { data: res.data.id } });
     }).catch((err) => {
+      console.log(err);
       if (err.message === "Request failed with status code 401") {
         window.alert("Invalid Details");
+      }else if(err.message === "Network Error") {
+        window.alert("The Server is offline");
+      }else if(err.message === "Request failed with status code 500") {
+        window.alert("Internal Server Error");
       }
     });
   };

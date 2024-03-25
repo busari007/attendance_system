@@ -41,6 +41,10 @@ function PasswordChanged() {
     }).catch((err)=>{
       if (err.message === "Request failed with status code 401") {
         window.alert("Invalid Details");
+      }else if(err.message === "Network Error") {
+        window.alert("The Server is offline");
+      }else if(err.message === "Request failed with status code 500") {
+        window.alert("Internal Server Error");
       } });
   };
 
