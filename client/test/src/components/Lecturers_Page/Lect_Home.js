@@ -119,6 +119,8 @@ function LectHome() {
         alert("The server's Offline");
     }else if(error.message === "Request failed with status code 500"){
       console.log("Internal Server Error");
+    }else if(error.response.data === 'Invalid status input'){
+      alert('Status can only be 0 or 1');
     }
     });
   };

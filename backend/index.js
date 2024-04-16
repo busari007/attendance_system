@@ -424,7 +424,6 @@ app.post('/attendance', async (req, res) => {
   });
 });
 
-
 // To get attendance records
 app.post('/getAttendance', (req, res) => {
   const { matric_num } = req.body;
@@ -482,7 +481,6 @@ WHERE
   });
 });
 
-
 // To get attendance records
 app.post('/getStudentsAttendance', (req, res) => {
 const { course_code } = req.body;
@@ -535,7 +533,6 @@ app.post('/getCourseId', (req, res) => {
     });
 });
 
-
 app.post('/absent', async (req, res) => {
     const { course_id } = req.body;
 
@@ -587,6 +584,7 @@ app.post('/absent', async (req, res) => {
 app.post('/updateAttendance', (req, res) => {
 const { attendanceID, newStatus } = req.body;
 
+if(newStatus == 1 || newStatus == 0){
 // Update the status in the database using the provided attendanceID
 const sql = 'UPDATE attendance SET Status = ? WHERE attendanceID = ?';
 db.query(sql, [newStatus, attendanceID], (err, result) => {
@@ -597,6 +595,9 @@ db.query(sql, [newStatus, attendanceID], (err, result) => {
     res.status(200).send("Status updated successfully");
   }
 });
+}else{
+  res.status(401).send("Invalid status input");
+}
 });
 
 //To validate password change

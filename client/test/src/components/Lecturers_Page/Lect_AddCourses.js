@@ -37,12 +37,12 @@ const LectAddCourses = () => {
     const sessionValid = state.session.trim() !== "";
     const departmentValid = state.department.trim() !== "";
     const courseNameValid = state.course_name.trim() !== "";
-    const courseCodeValid = state.course_code.trim() !== "";
+    const courseCodeValid = /\b\w{1,5}\d{3}\w*\b/.test(state.course_code);
 
     setSessionError(sessionValid ? "" : "Session is required");
     setDepartmentError(departmentValid ? "" : "Department is required");
     setCourseNameError(courseNameValid ? "" : "Course Name is required");
-    setCourseCodeError(courseCodeValid ? "" : "Course Code is required");
+    setCourseCodeError(courseCodeValid ? "" : "A proper Course Code is required");
 
     return sessionValid && departmentValid && courseNameValid && courseCodeValid;
   }, [state]);
@@ -80,7 +80,7 @@ const LectAddCourses = () => {
       }else if(err.message === "Request failed with status code 500"){
         alert("Internal Server Error");
       }else if(err.message === "Request failed with status code 409"){
-        alert(`${state.course_name} already exists`);
+        alert(`${state.course_code} already exists`);
       }
     });
   }, [lect_id, state, validateForm]);

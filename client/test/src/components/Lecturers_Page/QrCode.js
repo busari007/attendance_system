@@ -22,7 +22,7 @@ const QrCode = () => {
   const [isCodeGenerated, setIsCodeGenerated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [attendanceWindow, setAttendanceWindow] = useState(30);
+  const [attendanceWindow, setAttendanceWindow] = useState(30); //**USE THIS TO SET ATTENDANCE WINDOW IN SECONDS**
   const [timerId, setTimerId] = useState(null);
 
   function handleChange(e) {
@@ -68,7 +68,7 @@ const QrCode = () => {
           }
         });
         alert("Attendance Window Closed");
-      }, 30000); // Timer set to 30 seconds
+      }, attendanceWindow * 1000); // Timer set to 30 seconds from attendanceWindow ontop
   
        setTimerId(id);
     } else {

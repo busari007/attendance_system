@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2024 at 01:59 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Apr 17, 2024 at 12:50 AM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `test`
+-- Database: `attendance_system`
 --
 
 -- --------------------------------------------------------
@@ -33,7 +33,7 @@ CREATE TABLE `attendance` (
   `course_id` int(11) DEFAULT NULL,
   `timeTaken` timestamp NULL DEFAULT current_timestamp(),
   `dateTaken` datetime DEFAULT current_timestamp(),
-  `course_code` varchar(6) DEFAULT NULL,
+  `course_code` varchar(10) DEFAULT NULL,
   `Status` int(11) DEFAULT NULL,
   `lect_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
@@ -43,7 +43,7 @@ CREATE TABLE `attendance` (
 --
 
 INSERT INTO `attendance` (`attendanceID`, `matric_num`, `course_id`, `timeTaken`, `dateTaken`, `course_code`, `Status`, `lect_id`) VALUES
-(80, '20/2721', 6, '2024-03-18 00:52:52', '2024-03-18 01:52:52', 'MATH10', 0, 9);
+(82, '20/2721', 7, '2024-04-16 22:42:58', '2024-04-16 23:42:58', 'GEDS201', 1, 9);
 
 -- --------------------------------------------------------
 
@@ -54,7 +54,7 @@ INSERT INTO `attendance` (`attendanceID`, `matric_num`, `course_id`, `timeTaken`
 CREATE TABLE `courses` (
   `course_id` int(11) NOT NULL,
   `course_name` varchar(50) DEFAULT NULL,
-  `course_code` varchar(6) DEFAULT NULL,
+  `course_code` varchar(10) DEFAULT NULL,
   `lect_id` int(11) DEFAULT NULL,
   `department` varchar(50) DEFAULT NULL,
   `session` varchar(9) DEFAULT NULL
@@ -65,7 +65,8 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`course_id`, `course_name`, `course_code`, `lect_id`, `department`, `session`) VALUES
-(6, 'Maths', 'MATH10', 9, 'Software Engineering', '2024/2025');
+(7, 'English', 'GEDS201', 9, 'Software Engineering', '2024/2025'),
+(8, 'Maths', 'MATH101', 9, 'Software Engineering', '2024/2025');
 
 -- --------------------------------------------------------
 
@@ -88,7 +89,7 @@ CREATE TABLE `lecturers` (
 --
 
 INSERT INTO `lecturers` (`lect_id`, `lect_email`, `lect_password`, `lect_username`, `role`, `latitude`, `longitude`) VALUES
-(9, 'mbusari2006@yahoo.com', 'oooooo', 'LawalO', '', 6.8935672, 3.723091);
+(9, 'mbusari2006@yahoo.com', 'oooooo', 'LawalO', '', 6.893353199313925, 3.723111214530742);
 
 -- --------------------------------------------------------
 
@@ -106,7 +107,7 @@ CREATE TABLE `studentcourses` (
 --
 
 INSERT INTO `studentcourses` (`matric_num`, `course_id`) VALUES
-('20/2721', 6);
+('20/2721', 7);
 
 -- --------------------------------------------------------
 
@@ -176,13 +177,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `attendanceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=81;
+  MODIFY `attendanceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `course_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `lecturers`
